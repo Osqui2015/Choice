@@ -13,9 +13,9 @@
                 <p class="text-slate-400 mt-2 text-sm">Volvé mañana para mantener tu racha 🔥</p>
 
                 <div class="mt-6 bg-slate-900 border border-slate-700 rounded-xl p-5">
-                    <p class="text-xs uppercase tracking-wider text-slate-400">Tus próximas 10 preguntas se desbloquean en</p>
-                    <p class="mt-2 text-4xl font-mono font-bold text-emerald-300 tabular-nums">
-                        {{ countdown }}
+                    <p class="text-xs uppercase tracking-wider text-slate-400">Tus próximas 10 preguntas se desbloquean</p>
+                    <p class="mt-2 text-2xl font-bold text-emerald-300">
+                        {{ formattedReset }}
                     </p>
                 </div>
 
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuotaStore } from '@/stores/quota';
 import PricingModal from '@/components/PricingModal.vue';
@@ -51,39 +51,6 @@ const quotaStore = useQuotaStore();
 const router = useRouter();
 const openPricing = ref(false);
 
-/**
- * Timer LOCAL del componente. Se inicia cuando se abre el modal
- * y se limpia automáticamente al cerrarlo o desmontarlo.
- *
- * Antes este countdown vivía en el Pinia store (quotaStore.startTimer),
- * pero generaba un error de Vue scheduler ("startTime undefined") en
- * producción porque el setInterval del store seguía corriendo fuera del
- * scope de cualquier componente.
- */
-let timer: number | null = null;
-
-function tick() {
-    // Disparar reactividad en el computed de abajo
-    now.value = Date.now();
-}
-
-const now = ref(Date.now());
-
-const countdown = computed(() => {
-    const secs = quotaStore.quota?.seconds_remaining ?? 0;
-    if (secs <= 0) return '00:00:00';
-    // Calcular offset en base a Date.now() para que se actualice solo
-    const elapsedSinceFetch = Math.floor((now.value - fetchedAt.value) / 1000);
-    const remaining = Math.max(0, secs - elapsedSinceFetch);
-    if (remaining <= 0) return '00:00:00';
-    const h = Math.floor(remaining / 3600);
-    const m = Math.floor((remaining % 3600) / 60);
-    const s = remaining % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-});
-
-const fetchedAt = ref(Date.now());
-
 function onClose() {
     emit('close');
     if (props.redirectOnClose) {
@@ -91,36 +58,34 @@ function onClose() {
     }
 }
 
-function startLocalTimer() {
-    stopLocalTimer();
-    fetchedAt.value = Date.now();
-    now.value = Date.now();
-    timer = window.setInterval(tick, 1000);
-}
-
-function stopLocalTimer() {
-    if (timer !== null) {
-        clearInterval(timer);
-        timer = null;
-    }
-}
-
-watch(
-    () => props.open,
-    (v) => {
-        if (v) {
-            startLocalTimer();
-        } else {
-            stopLocalTimer();
+/**
+ * Muestra el tiempo restante formateado como "mañana a las HH:MM" o
+ * "en X horas" según corresponda. Sin setInterval — el valor se
+ * calcula bajo demanda desde el reset_at del backend.
+ *
+ * Antes había un setInterval que actualizaba el countdown cada
+ * segundo, pero generaba un error de Vue Devtools ("startTime
+ * undefined") en producción.
+ */
+const formattedReset = computed(() => {
+    const resetAt = quotaStore.quota?.reset_at;
+    if (! resetAt) return 'mañana';
+    try {
+        const d = new Date(resetAt);
+        const now = new Date();
+        const diffMs = d.getTime() - now.getTime();
+        if (diffMs <= 0) return 'ya disponible';
+        const hours = Math.floor(diffMs / (1000 * 60 * 60));
+        if (hours >= 12) {
+            return `mañana a las ${d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`;
         }
-    },
-);
-
-onMounted(() => {
-    if (props.open) startLocalTimer();
-});
-
-onBeforeUnmount(() => {
-    stopLocalTimer();
+        if (hours >= 1) {
+            return `en ${hours} hora${hours > 1 ? 's' : ''}`;
+        }
+        const mins = Math.max(1, Math.floor(diffMs / (1000 * 60)));
+        return `en ${mins} minuto${mins > 1 ? 's' : ''}`;
+    } catch {
+        return 'mañana';
+    }
 });
 </script>
