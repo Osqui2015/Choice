@@ -5,17 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
-/**
- * Seeder que crea los usuarios de demo que se muestran en la pantalla
- * de login (admin@choice.test y usuario@choice.test, ambos con password "password").
- *
- * Es idempotente: si el user ya existe, no hace nada.
- *
- * En producción real probablemente NO quieras correr este seeder
- * (porque expone credenciales conocidas). Para eso, dejá
- * SEED_DEMO_USERS=false en .env, o borralo del DatabaseSeeder.
- */
 class DemoUsersSeeder extends Seeder
 {
     public function run(): void
@@ -27,16 +18,16 @@ class DemoUsersSeeder extends Seeder
 
         $demoUsers = [
             [
-                'name'      => 'Administrador',
-                'email'     => 'admin@choice.test',
-                'password'  => 'password',
-                'is_admin'  => true,
+                'name'     => 'Administrador',
+                'email'    => 'admin@choice.test',
+                'password' => 'password',
+                'role'     => 'admin',
             ],
             [
-                'name'      => 'Usuario Demo',
-                'email'     => 'usuario@choice.test',
-                'password'  => 'password',
-                'is_admin'  => false,
+                'name'     => 'Usuario Demo',
+                'email'    => 'usuario@choice.test',
+                'password' => 'password',
+                'role'     => 'usuario',
             ],
         ];
 
@@ -51,11 +42,16 @@ class DemoUsersSeeder extends Seeder
                 ],
             );
 
-            if ($u['is_admin'] && ! $user->hasRole('admin')) {
-                $user->assignRole('admin');
+            // Asegurar que el rol exista y asignarlo
+            $role = Role::firstOrCreate(
+                ['name' => $u['role'], 'guard_name' => 'web'],
+            );
+
+            if (! $user->hasRole($role->name)) {
+                $user->assignRole($role->name);
             }
 
-            $this->command->info("  ✓ {$u['email']} / {$u['password']}" . ($u['is_admin'] ? ' (admin)' : ''));
+            $this->command->info("  ✓ {$u['email']} / {$u['password']} (rol: {$u['role']})");
         }
     }
 }
