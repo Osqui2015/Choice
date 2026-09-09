@@ -15,8 +15,10 @@
                         required
                         autocomplete="name"
                         class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        :class="errors.name ? 'border-red-500' : ''"
                         placeholder="Juan Pérez"
                     />
+                    <p v-if="errors.name" class="text-xs text-red-400 mt-1">{{ errors.name[0] }}</p>
                 </div>
 
                 <div>
@@ -34,6 +36,26 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">
+                        WhatsApp <span class="text-slate-500 font-normal">(con código de país)</span>
+                    </label>
+                    <input
+                        v-model="phone"
+                        type="tel"
+                        required
+                        autocomplete="tel"
+                        inputmode="tel"
+                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        :class="errors.phone ? 'border-red-500' : ''"
+                        placeholder="+54 9 11 1234-5678"
+                    />
+                    <p v-if="errors.phone" class="text-xs text-red-400 mt-1">{{ errors.phone[0] }}</p>
+                    <p v-else class="text-xs text-slate-500 mt-1">
+                        Lo usamos para coordinar el pago y avisarte cuando se active tu plan.
+                    </p>
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Contraseña</label>
                     <input
                         v-model="password"
@@ -42,8 +64,10 @@
                         minlength="8"
                         autocomplete="new-password"
                         class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        :class="errors.password ? 'border-red-500' : ''"
                         placeholder="Mínimo 8 caracteres"
                     />
+                    <p v-if="errors.password" class="text-xs text-red-400 mt-1">{{ errors.password[0] }}</p>
                 </div>
 
                 <div>
@@ -58,8 +82,19 @@
                         :class="errors.password ? 'border-red-500' : ''"
                         placeholder="Repetí la contraseña"
                     />
-                    <p v-if="errors.password" class="text-xs text-red-400 mt-1">{{ errors.password[0] }}</p>
                 </div>
+
+                <label class="flex items-start gap-3 cursor-pointer group">
+                    <input
+                        v-model="acceptsPromotions"
+                        type="checkbox"
+                        class="mt-1 rounded text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 bg-slate-700 border-slate-600"
+                    />
+                    <span class="text-sm text-slate-300 group-hover:text-slate-200">
+                        Quiero recibir novedades y promociones por WhatsApp.
+                        <span class="text-slate-500">(Opcional, podés cambiarlo cuando quieras)</span>
+                    </span>
+                </label>
 
                 <div v-if="auth.error" class="text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
                     {{ auth.error }}
@@ -91,8 +126,10 @@ import axios from 'axios';
 
 const name = ref('');
 const email = ref('');
+const phone = ref('');
 const password = ref('');
 const passwordConfirmation = ref('');
+const acceptsPromotions = ref(true);
 const errors = reactive<Record<string, string[]>>({});
 
 const auth = useAuthStore();
@@ -105,8 +142,10 @@ async function onSubmit() {
         const { data } = await axios.post('/auth/register', {
             name: name.value,
             email: email.value,
+            phone: phone.value,
             password: password.value,
             password_confirmation: passwordConfirmation.value,
+            accepts_promotions: acceptsPromotions.value,
         });
         auth.token = data.token;
         auth.user = data.user;

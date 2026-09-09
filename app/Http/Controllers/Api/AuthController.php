@@ -20,15 +20,22 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'unique:users,email'],
+            'phone'    => ['required', 'string', 'min:8', 'max:32', 'regex:/^[+0-9\s\-()]+$/'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'accepts_promotions' => ['nullable', 'boolean'],
+        ], [
+            'phone.required' => 'Necesitamos tu WhatsApp para coordinar pagos y avisos.',
+            'phone.regex'    => 'Formato de teléfono inválido. Usá solo números, +, espacios o guiones.',
         ]);
 
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'], // 'hashed' cast
+            'name'                => $data['name'],
+            'email'               => $data['email'],
+            'phone'               => $this->normalizePhone($data['phone']),
+            'accepts_promotions'  => (bool) ($data['accepts_promotions'] ?? false),
+            'password'            => $data['password'], // 'hashed' cast
         ]);
         $user->assignRole('usuario');
 
@@ -43,12 +50,22 @@ class AuthController extends Controller
         return response()->json([
             'token' => $token,
             'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
+                'id'    => $user->id,
+                'name'  => $user->name,
                 'email' => $user->email,
+                'phone' => $user->phone,
                 'roles' => $user->getRoleNames(),
             ],
         ], 201);
+    }
+
+    /**
+     * Normaliza el teléfono a solo dígitos con código de país (sin +, sin espacios).
+     * Ej: "+54 9 11 1234-5678" → "5491112345678"
+     */
+    protected function normalizePhone(string $phone): string
+    {
+        return preg_replace('/[^0-9]/', '', $phone);
     }
 
     /**
@@ -92,9 +109,10 @@ class AuthController extends Controller
         $user = $request->user();
 
         return response()->json([
-            'id' => $user->id,
-            'name' => $user->name,
+            'id'    => $user->id,
+            'name'  => $user->name,
             'email' => $user->email,
+            'phone' => $user->phone,
             'roles' => $user->getRoleNames(),
         ]);
     }

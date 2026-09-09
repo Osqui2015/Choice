@@ -399,6 +399,8 @@ class AdminController extends Controller
             'id' => $u->id,
             'name' => $u->name,
             'email' => $u->email,
+            'phone' => $u->phone,
+            'accepts_promotions' => (bool) $u->accepts_promotions,
             'roles' => $u->roles->pluck('name'),
             'is_premium' => (bool) $u->is_premium,
             'is_active' => (bool) $u->is_active,

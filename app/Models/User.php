@@ -24,6 +24,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'accepts_promotions',
         'password',
         'is_premium',
         'premium_until',
@@ -52,6 +54,7 @@ class User extends Authenticatable
             'premium_until' => 'datetime',
             'is_premium' => 'boolean',
             'is_active' => 'boolean',
+            'accepts_promotions' => 'boolean',
             'password' => 'hashed',
         ];
     }
