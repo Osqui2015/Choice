@@ -55,8 +55,35 @@ class SubscriptionService
             return $this->resolvePaidAccess($subscription, $specialtyId);
         }
 
+        // 1.5) Fallback: flag legacy is_premium con premium_until vigente.
+        // Usuarios que quedaron con el flag viejo (activado desde el panel
+        // admin con el toggle antiguo) siguen teniendo acceso hasta que
+        // se les cree una suscripción real o se venza el premium_until.
+        if ($this->hasLegacyPremium($user)) {
+            return [
+                'allowed' => true,
+                'reason'  => 'legacy_premium',
+            ];
+        }
+
         // 2) Free: validar specialty elegida + cuota
         return $this->resolveFreeAccess($user, $specialtyId);
+    }
+
+    /**
+     * Chequea si el user tiene el flag legacy `is_premium = true` y
+     * `premium_until` vigente. Usado como fallback mientras se
+     * migra al sistema de suscripciones nuevo.
+     */
+    public function hasLegacyPremium(User $user): bool
+    {
+        if (! $user->is_premium) {
+            return false;
+        }
+        if ($user->premium_until && $user->premium_until->isPast()) {
+            return false; // ya venció
+        }
+        return true;
     }
 
     protected function resolvePaidAccess(UserSubscription $sub, int $specialtyId): array

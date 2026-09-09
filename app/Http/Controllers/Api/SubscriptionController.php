@@ -34,9 +34,16 @@ class SubscriptionController extends Controller
         $quota    = $this->service->getOrCreateQuota($user);
         $this->service->refreshDailyCounter($quota);
 
+        // Fallback: usuarios con flag legacy is_premium=true (sin suscripción
+        // en el sistema nuevo) también cuentan como "tienen plan" para
+        // que el frontend muestre bien su estado. El checkSpecialtyAccess
+        // también los deja pasar.
+        $hasPlan = $active !== null || $this->service->hasLegacyPremium($user);
+        $activeForFrontend = $active ?: ($this->service->hasLegacyPremium($user) ? $this->buildLegacySubscription($user) : null);
+
         return response()->json([
-            'has_active_subscription' => $active !== null,
-            'active_subscription'     => $active ? $this->serializeActive($active) : null,
+            'has_active_subscription' => $hasPlan,
+            'active_subscription'     => $activeForFrontend ? $this->serializeActive($activeForFrontend) : null,
             'pending_request'         => $pending ? $this->serializePending($pending) : null,
             'free_quota' => [
                 'chosen_specialty'      => $quota->daily_specialty_id,
@@ -48,6 +55,32 @@ class SubscriptionController extends Controller
             ],
             'whatsapp_contact' => $this->whatsappContact(),
         ]);
+    }
+
+    /**
+     * Construye un "suscripción virtual" para usuarios con el flag legacy
+     * is_premium=true. Es solo para que el frontend pueda mostrar el estado
+     * correcto (banner, badge en navbar, etc).
+     */
+    protected function buildLegacySubscription(\App\Models\User $user): \App\Models\UserSubscription
+    {
+        $sub = new \App\Models\UserSubscription();
+        $sub->user_id = $user->id;
+        $sub->status = 'active';
+        $sub->started_at = $user->updated_at ?? now();
+        $sub->expires_at = $user->premium_until ?? now()->addYear();
+        $sub->payment_provider = 'legacy_flag';
+        $sub->setRelation('plan', new \App\Models\Plan([
+            'id' => 0,
+            'name' => 'Premium (legacy)',
+            'slug' => 'legacy',
+            'includes_flashcards' => true,
+            'max_specialties' => null, // ilimitadas
+            'price' => 0,
+            'currency' => 'ARS',
+        ]));
+        $sub->setRelation('specialties', collect()); // todas
+        return $sub;
     }
 
     /**
