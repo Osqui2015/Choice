@@ -13,7 +13,7 @@ auth.json
 /vendor
 
 # ---- Build artifacts (se regeneran con npm run build / php artisan) ----
-/public/build
+# /public/build
 /public/hot
 /public/storage
 /public/sw.js
