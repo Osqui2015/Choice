@@ -57,11 +57,15 @@ Thumbs.db
 /verify_*.php
 /tests/coverage
 
-# ---- Data sources (archivos fuente de import — NO van al repo) ----
+# ---- Data sources (archivos fuente de import) ----
+# Por defecto los xlsx NO se commitean (son binarios pesados)
 *.xlsx
 *.xls
 *.csv
 ~$*
+# Pero el banco de preguntas en database/imports/ SÍ va (necesario para producción)
+!database/imports/*.xlsx
+!database/imports/*.xls
 
 # ---- Misc ----
 *.log

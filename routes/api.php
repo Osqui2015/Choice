@@ -47,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Flashcards
     Route::get('/flashcards', [QuizController::class, 'flashcards'])
         ->middleware('specialty.access:flashcards');
+    Route::post('/flashcards/{id}/progress', [QuizController::class, 'progressFlashcard'])
+        ->whereNumber('id');
 
     // User
     Route::get('/user/quota', [QuizController::class, 'quota']);

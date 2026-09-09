@@ -429,9 +429,13 @@ class QuizController extends Controller
     {
         $user = $request->user();
 
-        if (! $this->quotaService->isFeatureAllowed($user, 'flashcards')) {
+        $allowed = $this->quotaService->isFeatureAllowed($user, 'flashcards')
+            || $user->hasRole('admin')
+            || (bool) $user->activeSubscription()?->plan?->includes_flashcards;
+
+        if (! $allowed) {
             return response()->json([
-                'message' => 'Las Flashcards clínicas son exclusivas para miembros Premium.',
+                'message' => 'Las Flashcards clínicas son exclusivas para miembros con acceso a Flashcards.',
                 'requires_premium' => true,
             ], 403);
         }

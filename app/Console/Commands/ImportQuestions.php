@@ -46,9 +46,19 @@ class ImportQuestions extends Command
     {
         $file = $this->argument('file');
         if (! $file) {
-            $defaultNew = base_path('MCQ_CLNICA_1.xlsx');
-            $defaultOld = base_path('BANCO_MCQ_CLINICA_1.xlsx');
-            $file = file_exists($defaultNew) ? $defaultNew : $defaultOld;
+            // Buscar en orden: argumento > database/imports/ > raíz (legacy)
+            $candidates = [
+                base_path('database/imports/MCQ_CLNICA_1.xlsx'),
+                base_path('database/imports/BANCO_MCQ_CLINICA_1.xlsx'),
+                base_path('MCQ_CLNICA_1.xlsx'),
+                base_path('BANCO_MCQ_CLINICA_1.xlsx'),
+            ];
+            foreach ($candidates as $candidate) {
+                if (file_exists($candidate)) {
+                    $file = $candidate;
+                    break;
+                }
+            }
         }
 
         if (! file_exists($file)) {

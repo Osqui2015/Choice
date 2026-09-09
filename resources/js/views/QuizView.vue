@@ -73,6 +73,15 @@
                 <!-- Header de pregunta -->
                 <div class="mb-4 flex items-center justify-between text-xs text-slate-400">
                     <div class="flex items-center gap-2 flex-wrap">
+                        <button
+                            @click="showExitModal = true"
+                            type="button"
+                            class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1 transition font-medium"
+                            title="Terminar sesión"
+                        >
+                            <span>✕</span>
+                            <span>Salir</span>
+                        </button>
                         <span class="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700">Pregunta {{ quiz.progress }}</span>
                         <span v-if="current.specialty" class="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-medium">{{ current.specialty.name }}</span>
                         <span v-if="current.topic" class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-medium">🏷️ {{ current.topic.name }}</span>
@@ -131,12 +140,20 @@
                     </div>
                 </div>
 
-                <!-- Botón responder -->
-                <div v-if="!quiz.feedback" class="flex justify-end">
+                <!-- Botón responder / terminar -->
+                <div v-if="!quiz.feedback" class="flex justify-between items-center gap-3">
+                    <button
+                        @click="showExitModal = true"
+                        type="button"
+                        class="px-4 py-2.5 rounded-xl border border-slate-700 hover:border-rose-500/50 bg-slate-800/80 hover:bg-rose-500/10 text-slate-400 hover:text-rose-300 text-xs font-semibold transition flex items-center gap-1.5"
+                    >
+                        <span>✕</span>
+                        <span>Terminar sesión</span>
+                    </button>
                     <button
                         @click="quiz.submitAnswer()"
                         :disabled="!quiz.selected || quiz.loading"
-                        class="px-6 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold"
+                        class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm transition shadow-lg shadow-indigo-600/20"
                     >
                         {{ quiz.loading ? 'Enviando…' : 'Responder' }}
                     </button>
@@ -173,10 +190,18 @@
                             <p v-if="quiz.feedback.source_file"><strong>Fuente:</strong> {{ quiz.feedback.source_file }}</p>
                         </div>
                     </div>
-                    <div class="flex justify-end">
+                    <div class="flex justify-between items-center gap-3">
+                        <button
+                            @click="showExitModal = true"
+                            type="button"
+                            class="px-4 py-2.5 rounded-xl border border-slate-700 hover:border-rose-500/50 bg-slate-800/80 hover:bg-rose-500/10 text-slate-400 hover:text-rose-300 text-xs font-semibold transition flex items-center gap-1.5"
+                        >
+                            <span>✕</span>
+                            <span>Terminar sesión</span>
+                        </button>
                         <button
                             @click="quiz.next()"
-                            class="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold"
+                            class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition shadow-lg shadow-emerald-600/20"
                         >
                             Siguiente pregunta →
                         </button>
@@ -186,6 +211,52 @@
         </main>
 
         <PricingModal :open="showPricing" @close="showPricing = false" />
+
+        <!-- Modal para confirmar salida / terminar sesión -->
+        <Teleport to="body">
+            <div
+                v-if="showExitModal"
+                class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity animate-fade-in"
+                @click.self="showExitModal = false"
+            >
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-sm w-full p-6 shadow-2xl text-slate-100">
+                    <div class="w-12 h-12 rounded-full bg-slate-700/60 border border-slate-600 flex items-center justify-center text-2xl mb-4 mx-auto">
+                        🚪
+                    </div>
+                    <h3 class="text-lg font-bold text-white text-center">¿Querés terminar la sesión?</h3>
+                    <p class="text-xs text-slate-400 text-center mt-1.5 leading-relaxed">
+                        <span v-if="answeredCount > 0">
+                            Respondiste <strong>{{ answeredCount }}</strong> preguntas en esta tanda ({{ quiz.sessionCorrect }} correctas, {{ quiz.sessionWrong }} incorrectas).
+                        </span>
+                        <span v-else>
+                            Aún no has respondido preguntas en esta tanda.
+                        </span>
+                    </p>
+
+                    <div class="mt-6 flex flex-col gap-2">
+                        <button
+                            v-if="answeredCount > 0"
+                            @click="finishAndShowResults"
+                            class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20"
+                        >
+                            📊 Ver resultados de la sesión
+                        </button>
+                        <router-link
+                            to="/study"
+                            class="w-full py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs transition text-center"
+                        >
+                            🏠 Salir al menú de materias
+                        </router-link>
+                        <button
+                            @click="showExitModal = false"
+                            class="w-full py-2 rounded-xl text-slate-400 hover:text-white text-xs transition"
+                        >
+                            Continuar respondiendo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
     </div>
 </template>
 
@@ -203,10 +274,17 @@ const quiz = useQuizStore();
 const quotaStore = useQuotaStore();
 
 const showPricing = ref(false);
+const showExitModal = ref(false);
 const loading = computed(() => quiz.loading);
 const current = computed(() => quiz.current);
 const streak = computed(() => quotaStore.currentCorrectStreak);
 const quota = computed(() => quotaStore.quota);
+const answeredCount = computed(() => quiz.sessionCorrect + quiz.sessionWrong);
+
+function finishAndShowResults() {
+    showExitModal.value = false;
+    quiz.index = quiz.questions.length;
+}
 
 function optionClasses(key: string): string {
     if (!quiz.feedback) {
