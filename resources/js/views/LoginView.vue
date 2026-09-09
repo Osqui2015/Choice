@@ -46,7 +46,15 @@
                 </button>
             </form>
 
-            <div class="mt-6 pt-6 border-t border-slate-700 text-xs text-slate-400 space-y-1">
+            <!--
+                Usuarios de prueba: solo se muestran en entorno de desarrollo.
+                En producción (vite build) este bloque no aparece.
+                Activable también con VITE_SHOW_DEMO_LOGIN_HINT=true en .env
+            -->
+            <div
+                v-if="showDemoUsers"
+                class="mt-6 pt-6 border-t border-slate-700 text-xs text-slate-400 space-y-1"
+            >
                 <p class="font-semibold text-slate-300">Usuarios de prueba:</p>
                 <p>Admin: <code class="text-indigo-300">admin@choice.test</code> / <code class="text-indigo-300">password</code></p>
                 <p>Usuario: <code class="text-indigo-300">usuario@choice.test</code> / <code class="text-indigo-300">password</code></p>
@@ -61,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
@@ -69,6 +77,17 @@ const email = ref('');
 const password = ref('');
 const auth = useAuthStore();
 const router = useRouter();
+
+/**
+ * Mostrar usuarios demo solo en dev, o si explícitamente se activa
+ * con VITE_SHOW_DEMO_LOGIN_HINT=true en el .env.
+ */
+const showDemoUsers = computed(() => {
+    const explicit = import.meta.env.VITE_SHOW_DEMO_LOGIN_HINT;
+    if (explicit === 'true' || explicit === true) return true;
+    if (explicit === 'false' || explicit === false) return false;
+    return import.meta.env.DEV; // default: dev sí, prod no
+});
 
 async function onSubmit() {
     const ok = await auth.login(email.value, password.value);
