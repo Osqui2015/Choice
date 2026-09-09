@@ -1,109 +1,108 @@
 <template>
-    <AdminLayout>
-        <div class="space-y-4">
-            <div class="flex items-center justify-between flex-wrap gap-3">
-                <h1 class="text-2xl font-bold text-white">👥 Usuarios</h1>
-                <button
-                    @click="openCreate"
-                    class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold"
-                >+ Nuevo usuario</button>
-            </div>
+    <AdminLayout title="Usuarios">
+        <div class="flex items-center justify-between mb-4">
+            <p class="text-slate-400 text-sm">{{ meta.total }} usuario{{ meta.total === 1 ? '' : 's' }} en total</p>
+            <button @click="openCreate" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold">+ Nuevo usuario</button>
+        </div>
 
-            <!-- Filtros -->
-            <div class="grid sm:grid-cols-4 gap-2">
-                <input
-                    v-model="filters.search"
-                    @input="debouncedLoad"
-                    type="text"
-                    placeholder="Buscar por nombre o email…"
-                    class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500"
-                />
-                <select v-model="filters.role" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white">
-                    <option value="">Todos los roles</option>
-                    <option value="admin">Admin</option>
-                    <option value="usuario">Usuario</option>
-                </select>
-                <select v-model="filters.is_premium" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white">
-                    <option value="">Todos</option>
-                    <option value="true">Premium</option>
-                    <option value="false">Free</option>
-                </select>
-                <select v-model="filters.is_active" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white">
-                    <option value="">Todos</option>
-                    <option value="true">Activos</option>
-                    <option value="false">Inactivos</option>
-                </select>
-            </div>
+        <!-- Filtros -->
+        <div class="grid sm:grid-cols-4 gap-3 mb-4">
+            <input v-model="filters.search" @input="debouncedLoad" type="text" placeholder="Buscar por nombre, email o WhatsApp…" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm" />
+            <select v-model="filters.role" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm">
+                <option value="">Todos los roles</option>
+                <option value="admin">Admin</option>
+                <option value="usuario">Usuario</option>
+            </select>
+            <select v-model="filters.is_premium" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm">
+                <option value="">Todos</option>
+                <option value="true">Premium</option>
+                <option value="false">Free</option>
+            </select>
+            <select v-model="filters.is_active" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm">
+                <option value="">Todos</option>
+                <option value="true">Activos</option>
+                <option value="false">Inactivos</option>
+            </select>
+        </div>
 
-            <!-- Tabla -->
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
-                <table class="w-full text-sm">
-                    <thead class="bg-slate-900/60 text-xs text-slate-400 uppercase">
-                        <tr>
-                            <th class="px-3 py-2 text-left">Usuario</th>
-                            <th class="px-3 py-2 text-left">Rol</th>
-                            <th class="px-3 py-2 text-left">Premium</th>
-                            <th class="px-3 py-2 text-left">Activo</th>
-                            <th class="px-3 py-2 text-left">Creado</th>
-                            <th class="px-3 py-2"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="loading"><td colspan="6" class="px-3 py-8 text-center text-slate-500">Cargando…</td></tr>
-                        <tr v-else-if="!users.length"><td colspan="6" class="px-3 py-8 text-center text-slate-500">No hay usuarios con esos filtros.</td></tr>
-                        <tr v-for="u in users" v-else :key="u.id" class="border-t border-slate-700/60">
-                            <td class="px-3 py-2.5">
-                                <p class="font-semibold text-white">{{ u.name }}</p>
-                                <p class="text-xs text-slate-400">{{ u.email }}</p>
-                            </td>
-                            <td class="px-3 py-2.5">
-                                <span v-for="r in u.roles" :key="r" class="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold">{{ r }}</span>
-                            </td>
-                            <td class="px-3 py-2.5">
-                                <button
-                                    @click="togglePremium(u)"
-                                    :class="['px-2 py-1 rounded text-xs font-semibold', u.is_premium ? 'bg-yellow-500/20 text-yellow-300' : 'bg-slate-700 text-slate-400']"
-                                >{{ u.is_premium ? '⚡ Premium' : 'Free' }}</button>
-                            </td>
-                            <td class="px-3 py-2.5">
-                                <button
-                                    @click="toggleActive(u)"
-                                    :class="['px-2 py-1 rounded text-xs font-semibold', u.is_active ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300']"
-                                >{{ u.is_active ? 'Activo' : 'Inactivo' }}</button>
-                            </td>
-                            <td class="px-3 py-2.5 text-xs text-slate-400">{{ formatDate(u.created_at) }}</td>
-                            <td class="px-3 py-2.5 text-right">
-                                <button @click="openEdit(u)" class="text-indigo-300 hover:text-indigo-200 text-xs font-semibold">Editar</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <!-- Tabla -->
+        <div class="bg-slate-800/40 border border-slate-700 rounded-2xl overflow-hidden mb-4">
+            <table class="w-full text-sm">
+                <thead class="bg-slate-900/60 text-xs text-slate-400 uppercase">
+                    <tr>
+                        <th class="px-3 py-2 text-left">Usuario</th>
+                        <th class="px-3 py-2 text-left">WhatsApp</th>
+                        <th class="px-3 py-2 text-left">Rol</th>
+                        <th class="px-3 py-2 text-left">Plan</th>
+                        <th class="px-3 py-2 text-left">Activo</th>
+                        <th class="px-3 py-2 text-left">Creado</th>
+                        <th class="px-3 py-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-if="loading"><td colspan="7" class="px-3 py-8 text-center text-slate-500">Cargando…</td></tr>
+                    <tr v-else-if="!users.length"><td colspan="7" class="px-3 py-8 text-center text-slate-500">No hay usuarios con esos filtros.</td></tr>
+                    <tr v-for="u in users" v-else :key="u.id" class="border-t border-slate-700/60">
+                        <td class="px-3 py-2.5">
+                            <p class="font-semibold text-white">{{ u.name }}</p>
+                            <p class="text-xs text-slate-400">{{ u.email }}</p>
+                        </td>
+                        <td class="px-3 py-2.5">
+                            <p v-if="u.phone" class="text-sm text-white font-mono">{{ formatPhone(u.phone) }}</p>
+                            <p v-else class="text-xs text-slate-500">—</p>
+                            <p v-if="u.accepts_promotions" class="text-[10px] text-emerald-400">📣 Acepta promos</p>
+                        </td>
+                        <td class="px-3 py-2.5">
+                            <span v-for="r in u.roles" :key="r" class="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold">{{ r }}</span>
+                        </td>
+                        <td class="px-3 py-2.5">
+                            <button
+                                @click="togglePremium(u)"
+                                :class="['px-2 py-1 rounded text-xs font-semibold', u.is_premium ? 'bg-yellow-500/20 text-yellow-300' : 'bg-slate-700 text-slate-400']"
+                            >{{ u.is_premium ? '⚡ Premium' : 'Free' }}</button>
+                        </td>
+                        <td class="px-3 py-2.5">
+                            <button
+                                @click="toggleActive(u)"
+                                :class="['px-2 py-1 rounded text-xs font-semibold', u.is_active ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300']"
+                            >{{ u.is_active ? 'Activo' : 'Inactivo' }}</button>
+                        </td>
+                        <td class="px-3 py-2.5 text-xs text-slate-400">{{ formatDate(u.created_at) }}</td>
+                        <td class="px-3 py-2.5 text-right">
+                            <button @click="openEdit(u)" class="text-indigo-300 hover:text-indigo-200 text-xs font-semibold">Editar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-            <!-- Paginación -->
-            <div v-if="meta.last_page > 1" class="flex items-center justify-center gap-2 text-sm">
-                <button
-                    v-for="p in meta.last_page"
-                    :key="p"
-                    @click="load(p)"
-                    :class="['px-3 py-1 rounded', p === meta.current_page ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300']"
-                >{{ p }}</button>
-            </div>
+        <!-- Paginación -->
+        <div v-if="meta.last_page > 1" class="flex items-center justify-center gap-2 text-sm">
+            <button
+                v-for="p in meta.last_page"
+                :key="p"
+                @click="load(p)"
+                :class="['px-3 py-1 rounded', p === meta.current_page ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300']"
+            >{{ p }}</button>
         </div>
 
         <!-- Modal crear/editar -->
         <Teleport to="body">
             <div v-if="editing" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" @click.self="editing = null">
-                <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
                     <h2 class="text-xl font-bold text-white mb-4">{{ editing.id ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
                     <form @submit.prevent="save" class="space-y-3">
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Nombre</label>
+                            <label class="block text-xs text-slate-400 mb-1">Nombre completo</label>
                             <input v-model="editing.name" type="text" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Email</label>
                             <input v-model="editing.email" type="email" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">WhatsApp <span class="text-slate-500">(con código de país)</span></label>
+                            <input v-model="editing.phone" type="tel" inputmode="tel" placeholder="+54 9 11 1234-5678" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Contraseña {{ editing.id ? '(dejar vacío para no cambiar)' : '' }}</label>
@@ -126,6 +125,10 @@
                                 Activo
                             </label>
                         </div>
+                        <label class="flex items-center gap-2 text-sm text-slate-200 pt-1">
+                            <input v-model="editing.accepts_promotions" type="checkbox" class="w-4 h-4" />
+                            Acepta promociones por WhatsApp
+                        </label>
                         <div class="flex gap-2 pt-2">
                             <button type="button" @click="editing = null" class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm">Cancelar</button>
                             <button type="submit" :disabled="saving" class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold disabled:opacity-50">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
@@ -146,6 +149,8 @@ interface UserRow {
     id: number;
     name: string;
     email: string;
+    phone: string | null;
+    accepts_promotions: boolean;
     roles: string[];
     is_premium: boolean;
     is_active: boolean;
@@ -183,7 +188,16 @@ async function load(page = 1) {
 }
 
 function openCreate() {
-    editing.value = { name: '', email: '', password: '', role: 'usuario', is_premium: false, is_active: true };
+    editing.value = {
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        role: 'usuario',
+        is_premium: false,
+        is_active: true,
+        accepts_promotions: false,
+    };
 }
 
 function openEdit(u: UserRow) {
@@ -194,17 +208,30 @@ async function save() {
     if (!editing.value) return;
     saving.value = true;
     try {
+        const payload: any = { ...editing.value };
+        if (editing.value.id && !payload.password) {
+            delete payload.password;
+        }
+        // Roles viene como array; el backend espera 'role' string
+        if (Array.isArray(payload.roles)) {
+            payload.role = payload.roles[0] ?? 'usuario';
+            delete payload.roles;
+        }
+        // Premium_until vacío → null
+        if (payload.premium_until === '') {
+            payload.premium_until = null;
+        }
         if (editing.value.id) {
-            const payload: any = { ...editing.value };
-            if (!payload.password) delete payload.password;
             await axios.patch(`/admin/users/${editing.value.id}`, payload);
         } else {
-            await axios.post('/admin/users', editing.value);
+            await axios.post('/admin/users', payload);
         }
         editing.value = null;
         await load(meta.current_page);
     } catch (e: any) {
-        alert(e.response?.data?.message || 'Error al guardar');
+        const errs = e.response?.data?.errors;
+        const firstError = errs ? Object.values(errs).flat()[0] : null;
+        alert(firstError || e.response?.data?.message || 'Error al guardar');
     } finally {
         saving.value = false;
     }
@@ -224,6 +251,17 @@ function formatDate(iso: string | null): string {
     if (!iso) return '—';
     const d = new Date(iso);
     return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+/** Formatea "5491112345678" → "+54 9 11 1234-5678" para mostrar. */
+function formatPhone(raw: string | null): string {
+    if (! raw) return '';
+    if (! raw.startsWith('54')) return raw;
+    const rest = raw.slice(2);
+    if (rest.length === 10) {
+        return `+54 ${rest[0]} ${rest.slice(1, 3)} ${rest.slice(3, 7)}-${rest.slice(7)}`;
+    }
+    return `+54 ${rest}`;
 }
 
 onMounted(load);

@@ -145,22 +145,26 @@ class AdminController extends Controller
     public function storeUser(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'unique:users,email'],
+            'phone'    => ['nullable', 'string', 'min:8', 'max:32', 'regex:/^[+0-9\s\-()]+$/'],
             'password' => ['required', 'string', 'min:8'],
-            'role' => ['required', 'in:admin,usuario'],
+            'role'     => ['required', 'in:admin,usuario'],
             'is_premium' => ['nullable', 'boolean'],
-            'is_active' => ['nullable', 'boolean'],
+            'is_active'  => ['nullable', 'boolean'],
             'premium_until' => ['nullable', 'date'],
+            'accepts_promotions' => ['nullable', 'boolean'],
         ]);
 
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
-            'is_premium' => $data['is_premium'] ?? false,
-            'is_active' => $data['is_active'] ?? true,
-            'premium_until' => $data['premium_until'] ?? null,
+            'name'                => $data['name'],
+            'email'               => $data['email'],
+            'phone'               => isset($data['phone']) ? preg_replace('/[^0-9]/', '', $data['phone']) : null,
+            'password'            => $data['password'],
+            'is_premium'          => $data['is_premium'] ?? false,
+            'is_active'           => $data['is_active'] ?? true,
+            'premium_until'       => $data['premium_until'] ?? null,
+            'accepts_promotions'  => $data['accepts_promotions'] ?? false,
         ]);
         $user->assignRole($data['role']);
 
@@ -179,13 +183,15 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
         $data = $request->validate([
-            'name' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+            'name'     => ['nullable', 'string', 'max:255'],
+            'email'    => ['nullable', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+            'phone'    => ['nullable', 'string', 'min:8', 'max:32', 'regex:/^[+0-9\s\-()]+$/'],
             'password' => ['nullable', 'string', 'min:8'],
-            'role' => ['nullable', 'in:admin,usuario'],
+            'role'     => ['nullable', 'in:admin,usuario'],
             'is_premium' => ['nullable', 'boolean'],
-            'is_active' => ['nullable', 'boolean'],
+            'is_active'  => ['nullable', 'boolean'],
             'premium_until' => ['nullable', 'date'],
+            'accepts_promotions' => ['nullable', 'boolean'],
         ]);
 
         if (! empty($data['password'])) {
@@ -193,6 +199,9 @@ class AdminController extends Controller
         }
         if (array_key_exists('name', $data)) $user->name = $data['name'];
         if (array_key_exists('email', $data)) $user->email = $data['email'];
+        if (array_key_exists('phone', $data)) {
+            $user->phone = $data['phone'] !== null ? preg_replace('/[^0-9]/', '', $data['phone']) : null;
+        }
         if (array_key_exists('is_premium', $data)) $user->is_premium = (bool) $data['is_premium'];
         if (array_key_exists('is_active', $data)) {
             $user->is_active = (bool) $data['is_active'];
@@ -202,6 +211,7 @@ class AdminController extends Controller
             }
         }
         if (array_key_exists('premium_until', $data)) $user->premium_until = $data['premium_until'];
+        if (array_key_exists('accepts_promotions', $data)) $user->accepts_promotions = (bool) $data['accepts_promotions'];
         $user->save();
 
         if (! empty($data['role'])) {
