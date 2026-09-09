@@ -181,7 +181,6 @@ const formatCountdown = computed(() => quotaStore.countdown);
 
 function onLogout() {
     menuOpen.value = false;
-    quotaStore.stopTimer();
     auth.logout().then(() => router.push({ name: 'login' }));
 }
 

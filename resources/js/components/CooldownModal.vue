@@ -15,7 +15,7 @@
                 <div class="mt-6 bg-slate-900 border border-slate-700 rounded-xl p-5">
                     <p class="text-xs uppercase tracking-wider text-slate-400">Tus próximas 10 preguntas se desbloquean en</p>
                     <p class="mt-2 text-4xl font-mono font-bold text-emerald-300 tabular-nums">
-                        {{ quotaStore.countdown }}
+                        {{ countdown }}
                     </p>
                 </div>
 
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuotaStore } from '@/stores/quota';
 import PricingModal from '@/components/PricingModal.vue';
@@ -51,6 +51,39 @@ const quotaStore = useQuotaStore();
 const router = useRouter();
 const openPricing = ref(false);
 
+/**
+ * Timer LOCAL del componente. Se inicia cuando se abre el modal
+ * y se limpia automáticamente al cerrarlo o desmontarlo.
+ *
+ * Antes este countdown vivía en el Pinia store (quotaStore.startTimer),
+ * pero generaba un error de Vue scheduler ("startTime undefined") en
+ * producción porque el setInterval del store seguía corriendo fuera del
+ * scope de cualquier componente.
+ */
+let timer: number | null = null;
+
+function tick() {
+    // Disparar reactividad en el computed de abajo
+    now.value = Date.now();
+}
+
+const now = ref(Date.now());
+
+const countdown = computed(() => {
+    const secs = quotaStore.quota?.seconds_remaining ?? 0;
+    if (secs <= 0) return '00:00:00';
+    // Calcular offset en base a Date.now() para que se actualice solo
+    const elapsedSinceFetch = Math.floor((now.value - fetchedAt.value) / 1000);
+    const remaining = Math.max(0, secs - elapsedSinceFetch);
+    if (remaining <= 0) return '00:00:00';
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    const s = remaining % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+});
+
+const fetchedAt = ref(Date.now());
+
 function onClose() {
     emit('close');
     if (props.redirectOnClose) {
@@ -58,10 +91,36 @@ function onClose() {
     }
 }
 
+function startLocalTimer() {
+    stopLocalTimer();
+    fetchedAt.value = Date.now();
+    now.value = Date.now();
+    timer = window.setInterval(tick, 1000);
+}
+
+function stopLocalTimer() {
+    if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+    }
+}
+
 watch(
     () => props.open,
     (v) => {
-        if (v) quotaStore.startTimer();
+        if (v) {
+            startLocalTimer();
+        } else {
+            stopLocalTimer();
+        }
     },
 );
+
+onMounted(() => {
+    if (props.open) startLocalTimer();
+});
+
+onBeforeUnmount(() => {
+    stopLocalTimer();
+});
 </script>
