@@ -1,7 +1,7 @@
 <?php
 /**
- * Fix para limpiar la tabla user_flashcard_progress creada parcialmente
- * y resetear la migración fallida.
+ * Fix para limpiar las migraciones fallidas de user_flashcard_progress
+ * y add_is_active_to_admin_tables.
  *
  * Ejecutar una sola vez:
  *   php fix_flashcard_migration.php
@@ -19,9 +19,9 @@ $kernel->bootstrap();
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-echo "🔧 Arreglando migración fallida de user_flashcard_progress\n\n";
+echo "🔧 Arreglando migraciones fallidas\n\n";
 
-// 1) Borrar la tabla user_flashcard_progress (si existe)
+// 1) Borrar la tabla user_flashcard_progress (si existe, para que la migración la recree limpia)
 if (Schema::hasTable('user_flashcard_progress')) {
     Schema::drop('user_flashcard_progress');
     echo "  ✓ Tabla user_flashcard_progress eliminada.\n";
@@ -29,22 +29,29 @@ if (Schema::hasTable('user_flashcard_progress')) {
     echo "  - Tabla user_flashcard_progress no existe, ok.\n";
 }
 
-// 2) Borrar la entrada de la migración fallida en la tabla migrations
-$deleted = DB::table('migrations')
-    ->where('migration', '2026_09_06_231659_create_user_flashcard_progress_table')
-    ->delete();
+// 2) Limpiar las entradas de migraciones fallidas en la tabla migrations
+$failedMigrations = [
+    '2026_09_06_231659_create_user_flashcard_progress_table',
+    '2026_09_07_015825_add_is_active_to_admin_tables',
+];
 
-if ($deleted > 0) {
-    echo "  ✓ Entrada de migración fallida eliminada de 'migrations'.\n";
-} else {
-    echo "  - Entrada de migración no estaba en 'migrations', ok.\n";
+foreach ($failedMigrations as $migration) {
+    $deleted = DB::table('migrations')
+        ->where('migration', $migration)
+        ->delete();
+
+    if ($deleted > 0) {
+        echo "  ✓ Entrada '{$migration}' eliminada de 'migrations'.\n";
+    } else {
+        echo "  - Entrada '{$migration}' no estaba en 'migrations', ok.\n";
+    }
 }
 
 // 3) Verificar que la tabla flashcards existe
 if (Schema::hasTable('flashcards')) {
     echo "  ✓ Tabla flashcards existe (la nueva migración la creó).\n";
 } else {
-    echo "  ✗ Tabla flashcards NO existe. Algo falló. Corré: php artisan migrate --force\n";
+    echo "  ✗ Tabla flashcards NO existe. Corré: php artisan migrate --force primero\n";
     exit(1);
 }
 
