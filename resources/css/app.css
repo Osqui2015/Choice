@@ -25,36 +25,107 @@
 /* ----------------------------------------------------------------------- */
 
 :root:not(.dark) {
-    /* Mapeo semánticamente invertido */
-    --color-slate-50:  #0f172a;  /* text casi negro */
-    --color-slate-100: #1e293b;  /* text más fuerte */
-    --color-slate-200: #334155;  /* text bright */
-    --color-slate-300: #475569;  /* text soft */
-    --color-slate-400: #64748b;  /* text muted */
-    --color-slate-500: #94a3b8;  /* disabled */
-    --color-slate-600: #cbd5e1;  /* border fuerte */
-    --color-slate-700: #e2e8f0;  /* border sutil */
+    /* Mapeo semánticamente invertido y calibrado para contraste óptimo */
+    --color-slate-50:  #020617;  /* text deepest black */
+    --color-slate-100: #0f172a;  /* text títulos principales (slate-900) */
+    --color-slate-200: #1e293b;  /* text títulos cards / destacados (slate-800) */
+    --color-slate-300: #334155;  /* text cuerpo / descripciones (slate-700) */
+    --color-slate-400: #475569;  /* text secundario / labels (slate-600) */
+    --color-slate-500: #64748b;  /* text terciario / códigos / placeholders (slate-500) */
+    --color-slate-600: #94a3b8;  /* border hover / fuerte */
+    --color-slate-700: #cbd5e1;  /* border sutil y nítido de cards */
     --color-slate-800: #ffffff;  /* card / surface */
     --color-slate-900: #f8fafc;  /* fondo principal */
-    --color-slate-950: #ffffff;
+    --color-slate-950: #ffffff;  /* surface modal / dialog */
 
-    /* Accents: las variantes claras (200/300) se invierten a versiones oscuras
-       para que los text-emerald-300, text-orange-300, etc. se sigan leyendo
-       sobre fondos claros. Las variantes 500/600/700/800 se mantienen. */
+    /* Accents oscuros en light mode para lectura de textos y badges */
+    --color-emerald-100: #064e3b;
     --color-emerald-200: #065f46;
     --color-emerald-300: #047857;
     --color-emerald-400: #059669;
+    --color-emerald-900: #ecfdf5;
+    --color-emerald-950: #d1fae5;
+
+    --color-indigo-100:  #312e81;
     --color-indigo-200:  #3730a3;
     --color-indigo-300:  #4338ca;
     --color-indigo-400:  #4f46e5;
+    --color-indigo-900:  #eef2ff;
+    --color-indigo-950:  #e0e7ff;
+
+    --color-orange-100:  #7c2d12;
     --color-orange-200:  #9a3412;
     --color-orange-300:  #c2410c;
-    --color-amber-200:   #b45309;
+    --color-orange-400:  #ea580c;
+
+    --color-amber-100:   #78350f;
+    --color-amber-200:   #92400e;
     --color-amber-300:   #b45309;
+    --color-amber-400:   #d97706;
+    --color-amber-900:   #fffbeb;
+    --color-amber-950:   #fef3c7;
+
+    --color-rose-100:    #881337;
     --color-rose-200:    #9f1239;
     --color-rose-300:    #be123c;
+    --color-rose-400:    #e11d48;
+    --color-rose-900:    #fff1f2;
+    --color-rose-950:    #ffe4e6;
+
+    --color-red-100:     #7f1d1d;
     --color-red-200:     #991b1b;
     --color-red-300:     #b91c1c;
+    --color-red-400:     #dc2626;
+
+    --color-yellow-100:  #713f12;
+    --color-yellow-200:  #854d0e;
+    --color-yellow-300:  #a16207;
+    --color-yellow-400:  #ca8a04;
+
+    --color-purple-900:  #faf5ff;
+    --color-purple-950:  #f3e8ff;
+
+    --color-cyan-900:    #ecfeff;
+    --color-cyan-950:    #cffafe;
+}
+
+/* ----------------------------------------------------------------------- */
+/*  Ajustes específicos de superficies y cards en modo light               */
+/* ----------------------------------------------------------------------- */
+
+/* 1. Header con fondo translúcido blanco y borde inferior nítido */
+:root:not(.dark) header {
+    background-color: rgba(255, 255, 255, 0.88);
+    border-bottom-color: var(--color-slate-700);
+}
+
+/* 2. Las cards principales deben tener fondo blanco sólido y sombra sutil */
+:root:not(.dark) .bg-slate-800\/50,
+:root:not(.dark) .bg-slate-800\/40,
+:root:not(.dark) .bg-slate-800\/60,
+:root:not(.dark) .bg-slate-800\/80 {
+    background-color: #ffffff;
+}
+
+:root:not(.dark) .bg-slate-800,
+:root:not(.dark) .bg-slate-800\/50,
+:root:not(.dark) .bg-slate-800\/40,
+:root:not(.dark) .bg-slate-800\/60,
+:root:not(.dark) .bg-slate-800\/80 {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+}
+
+/* 3. Elementos rehundidos / secundarios dentro de cards y modales (inputs, listas, headers de tablas) */
+:root:not(.dark) .bg-slate-900\/50,
+:root:not(.dark) .bg-slate-900\/60,
+:root:not(.dark) .bg-slate-900\/70 {
+    background-color: #f8fafc;
+    border-color: var(--color-slate-700);
+}
+
+/* 4. Bordes de elementos con border-slate-800 */
+:root:not(.dark) .border-slate-800 {
+    border-color: var(--color-slate-700);
 }
 
 /* Suavizar la transición cuando el usuario cambia de tema.

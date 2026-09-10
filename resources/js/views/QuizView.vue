@@ -302,13 +302,13 @@ function optionClasses(key: string): string {
 function keyClasses(key: string): string {
     if (!quiz.feedback) {
         return quiz.selected === key
-            ? 'bg-indigo-600 border-indigo-500 text-slate-100'
+            ? 'bg-indigo-600 border-indigo-500 text-white'
             : 'bg-slate-700 border-slate-600 text-slate-200';
     }
     const correct = quiz.feedback.correct_answer === key;
     const selected = quiz.selected === key;
-    if (correct) return 'bg-emerald-600 border-emerald-500 text-slate-100';
-    if (selected && !correct) return 'bg-rose-600 border-rose-500 text-slate-100';
+    if (correct) return 'bg-emerald-600 border-emerald-500 text-white';
+    if (selected && !correct) return 'bg-rose-600 border-rose-500 text-white';
     return 'bg-slate-700 border-slate-600 text-slate-400';
 }
 

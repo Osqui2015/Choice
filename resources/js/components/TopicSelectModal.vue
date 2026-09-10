@@ -198,11 +198,11 @@ function onSelectTopic(topicId: number | null) {
     width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.4);
+    background: transparent;
     border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(100, 116, 139, 0.4);
+    background: rgba(100, 116, 139, 0.35);
     border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {

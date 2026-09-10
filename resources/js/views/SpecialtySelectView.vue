@@ -22,11 +22,11 @@
                     ]"
                 >
                     <div class="text-2xl mb-1">📖</div>
-                    <div class="font-semibold flex items-center justify-between">
+                    <div class="font-semibold flex items-center justify-between text-slate-100">
                         <span>Modo Estudio</span>
-                        <span v-if="!quota?.is_premium" class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-700 font-normal">4/esp</span>
+                        <span v-if="!quota?.is_premium" class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-200 font-semibold">4/esp</span>
                     </div>
-                    <div class="text-xs opacity-70 mt-0.5">Preguntas con feedback inmediato</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Preguntas con feedback inmediato</div>
                 </button>
                 <button
                     @click="onErrorsModeClick"
@@ -38,11 +38,11 @@
                     ]"
                 >
                     <div class="text-2xl mb-1">🔄</div>
-                    <div class="font-semibold flex items-center justify-between">
+                    <div class="font-semibold flex items-center justify-between text-slate-100">
                         <span>Banco de Fallos</span>
-                        <span v-if="!quota?.is_premium" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">🔒 PRO</span>
+                        <span v-if="!quota?.is_premium" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">🔒 PRO</span>
                     </div>
-                    <div class="text-xs opacity-70 mt-0.5">Repasá lo que fallaste</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Repasá lo que fallaste</div>
                 </button>
                 <button
                     @click="onFlashcardsModeClick"
@@ -54,11 +54,11 @@
                     ]"
                 >
                     <div class="text-2xl mb-1">📇</div>
-                    <div class="font-semibold flex items-center justify-between">
+                    <div class="font-semibold flex items-center justify-between text-slate-100">
                         <span>Flashcards</span>
-                        <span v-if="!quota?.is_premium" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">🔒 PRO</span>
+                        <span v-if="!quota?.is_premium" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">🔒 PRO</span>
                     </div>
-                    <div class="text-xs opacity-70 mt-0.5">Repaso rápido de conceptos</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Repaso rápido de conceptos</div>
                 </button>
             </div>
 
@@ -75,12 +75,12 @@
                             TODAS
                         </span>
                     </p>
-                    <p class="text-xs text-slate-700 mt-1">
+                    <p class="text-xs text-slate-300 mt-1">
                         <span v-if="!sub.active.is_unlimited && sub.active.specialties.length > 0">
                             📚 {{ sub.active.specialties.map(s => s.name).join(' · ') }}
                         </span>
                         <span v-else>Acceso a todas las especialidades + flashcards</span>
-                        · <strong class="text-emerald-300">{{ sub.active.days_remaining }}</strong> días restantes
+                        · <strong class="text-emerald-300 font-bold">{{ sub.active.days_remaining }}</strong> días restantes
                     </p>
                 </div>
                 <div class="flex gap-2">
@@ -188,23 +188,23 @@
                         >
                             🔒
                         </span>
-                        <span v-else class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-700">{{ s.code }}</span>
+                        <span v-else class="text-xs px-2.5 py-0.5 rounded-full bg-slate-700 text-slate-200 font-semibold">{{ s.code }}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-xs text-slate-400">
                         <div v-if="hasAccessTo(s.id)">
-                            📝 <span class="text-slate-200">{{ s.stats?.total_questions ?? 0 }}</span> preguntas
+                            📝 <span class="text-slate-200 font-semibold">{{ s.stats?.total_questions ?? 0 }}</span> preguntas
                         </div>
                         <div v-else>
-                            📝 <span class="text-slate-500">{{ s.stats?.total_questions ?? 0 }}</span>
+                            📝 <span class="text-slate-500 font-semibold">{{ s.stats?.total_questions ?? 0 }}</span>
                             <span class="text-amber-400 text-[10px] ml-1">🔒</span>
                         </div>
                         <div>
-                            📇 <span :class="hasAccessTo(s.id) ? 'text-slate-200' : 'text-slate-500'">{{ s.stats?.total_flashcards ?? 0 }}</span>
+                            📇 <span :class="hasAccessTo(s.id) ? 'text-slate-200 font-semibold' : 'text-slate-500'">{{ s.stats?.total_flashcards ?? 0 }}</span>
                             <span v-if="!hasAccessTo(s.id)" class="text-amber-400 text-[10px] ml-1">PRO</span>
                             <span v-else>flashcards</span>
                         </div>
-                        <div>✅ <span class="text-emerald-300">{{ s.stats?.accuracy ?? 0 }}%</span> acierto</div>
-                        <div>📊 <span class="text-indigo-300">{{ s.stats?.progress ?? 0 }}%</span> avance</div>
+                        <div>✅ <span class="text-emerald-300 font-semibold">{{ s.stats?.accuracy ?? 0 }}%</span> acierto</div>
+                        <div>📊 <span class="text-indigo-300 font-semibold">{{ s.stats?.progress ?? 0 }}%</span> avance</div>
                     </div>
                     <div class="mt-3 h-1.5 rounded-full bg-slate-700 overflow-hidden">
                         <div
@@ -232,7 +232,7 @@
                     >
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-lg font-bold text-slate-100">{{ s.name }}</h3>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-700">{{ s.code }}</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-700 text-slate-200 font-semibold">{{ s.code }}</span>
                         </div>
                         <div class="text-sm text-slate-300">{{ s.stats?.total_flashcards ?? 0 }} flashcards disponibles</div>
                     </button>
