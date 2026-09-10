@@ -8,3 +8,53 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* ----------------------------------------------------------------------- */
+/*  Sistema de temas                                                       */
+/*                                                                         */
+/*  Tailwind 4 compila los utilities (`bg-slate-900`, `text-slate-100`,    */
+/*  `border-slate-700`, etc.) usando variables CSS que se exponen a partir */
+/*  de `@theme`. Reasignando esas variables en el modo claro conseguimos   */
+/*  que TODA la app —incluidos los componentes escritos pensando en dark—  */
+/*  se "invierta" semánticamente sin tocar un solo .vue.                   */
+/*                                                                         */
+/*  El mapeo NO es "negativo" (no es 255-r,g,b); es un mapeo intencional:  */
+/*  lo que era fondo principal en dark pasa a ser el color más claro,      */
+/*  lo que era texto principal en dark pasa a ser el color más oscuro, etc */
+/*  para mantener contraste legible en ambos modos.                        */
+/* ----------------------------------------------------------------------- */
+
+:root:not(.dark) {
+    /* Mapeo semánticamente invertido */
+    --color-slate-50:  #0f172a;  /* text casi negro */
+    --color-slate-100: #1e293b;  /* text más fuerte */
+    --color-slate-200: #334155;  /* text bright */
+    --color-slate-300: #475569;  /* text soft */
+    --color-slate-400: #64748b;  /* text muted */
+    --color-slate-500: #94a3b8;  /* disabled */
+    --color-slate-600: #cbd5e1;  /* border fuerte */
+    --color-slate-700: #e2e8f0;  /* border sutil */
+    --color-slate-800: #ffffff;  /* card / surface */
+    --color-slate-900: #f8fafc;  /* fondo principal */
+    --color-slate-950: #ffffff;
+}
+
+/* Suavizar la transición cuando el usuario cambia de tema.
+   Respeta prefers-reduced-motion automáticamente. */
+html {
+    background-color: var(--color-slate-900);
+    color: var(--color-slate-100);
+}
+
+html.theme-ready,
+html.theme-ready * {
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease,
+        fill 200ms ease, stroke 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.theme-ready,
+    html.theme-ready * {
+        transition: none;
+    }
+}

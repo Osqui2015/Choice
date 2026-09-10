@@ -3,7 +3,7 @@
         <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-10">
             <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div>
-                    <h1 class="text-xl font-bold text-white">{{ title }}</h1>
+                    <h1 class="text-xl font-bold text-slate-100">{{ title }}</h1>
                     <p v-if="auth.user" class="text-xs text-slate-400">
                         {{ auth.user.name }} · {{ auth.user.roles.join(', ') }}
                     </p>

@@ -3,7 +3,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
             <router-link to="/study" class="flex items-center gap-2.5">
                 <img src="/icons/icon-192.png" alt="Choice" width="32" height="32" class="w-8 h-8 rounded-lg shadow-md shadow-indigo-500/20 shrink-0 object-cover" />
-                <span class="font-bold text-white tracking-tight text-lg hidden sm:inline">Choice</span>
+                <span class="font-bold text-slate-100 tracking-tight text-lg hidden sm:inline">Choice</span>
             </router-link>
 
             <div class="flex items-center gap-2 sm:gap-3">
@@ -55,11 +55,14 @@
                     <span v-else>⚡ FREE</span>
                 </button>
 
+                <!-- Toggle de tema (dark / light) -->
+                <ThemeToggle />
+
                 <!-- Menú usuario -->
                 <div class="relative" ref="menuRef">
                     <button
                         @click="menuOpen = !menuOpen"
-                        class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-sm font-semibold transition"
+                        class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 text-sm font-semibold transition"
                     >
                         {{ initials }}
                     </button>
@@ -68,7 +71,7 @@
                         class="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1"
                     >
                         <div class="px-4 py-2 border-b border-slate-700">
-                            <p class="text-sm text-white font-semibold truncate">{{ auth.user?.name }}</p>
+                            <p class="text-sm text-slate-100 font-semibold truncate">{{ auth.user?.name }}</p>
                             <p class="text-xs text-slate-400 truncate">{{ auth.user?.email }}</p>
                         </div>
                         <router-link
@@ -159,6 +162,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useQuotaStore } from '@/stores/quota';
 import { useSubscriptionStore } from '@/stores/subscription';
 import PricingModal from '@/components/PricingModal.vue';
+import ThemeToggle from '@/components/ThemeToggle.vue';
 
 const auth = useAuthStore();
 const quotaStore = useQuotaStore();
