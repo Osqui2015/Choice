@@ -119,7 +119,7 @@
 :root:not(.dark) .bg-slate-900\/50,
 :root:not(.dark) .bg-slate-900\/60,
 :root:not(.dark) .bg-slate-900\/70 {
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
     border-color: var(--color-slate-700);
 }
 
