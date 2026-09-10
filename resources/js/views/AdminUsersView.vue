@@ -36,15 +36,18 @@
                         <th class="px-3 py-2 text-left">Plan</th>
                         <th class="px-3 py-2 text-left">Activo</th>
                         <th class="px-3 py-2 text-left">Creado</th>
-                        <th class="px-3 py-2"></th>
+                        <th class="px-3 py-2 text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="loading"><td colspan="7" class="px-3 py-8 text-center text-slate-500">Cargando…</td></tr>
                     <tr v-else-if="!users.length"><td colspan="7" class="px-3 py-8 text-center text-slate-500">No hay usuarios con esos filtros.</td></tr>
-                    <tr v-for="u in users" v-else :key="u.id" class="border-t border-slate-700/60">
+                    <tr v-for="u in users" v-else :key="u.id" class="border-t border-slate-700/60 hover:bg-slate-800/30">
                         <td class="px-3 py-2.5">
-                            <p class="font-semibold text-slate-100">{{ u.name }}</p>
+                            <p class="font-semibold text-slate-100 flex items-center gap-1.5">
+                                {{ u.name }}
+                                <span v-if="u.id === auth.user?.id" class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-bold">VOS</span>
+                            </p>
                             <p class="text-xs text-slate-400">{{ u.email }}</p>
                         </td>
                         <td class="px-3 py-2.5">
@@ -64,12 +67,32 @@
                         <td class="px-3 py-2.5">
                             <button
                                 @click="toggleActive(u)"
-                                :class="['px-2 py-1 rounded text-xs font-semibold', u.is_active ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300']"
-                            >{{ u.is_active ? 'Activo' : 'Inactivo' }}</button>
+                                :title="u.is_active ? 'Desactivar usuario' : 'Activar usuario'"
+                                :class="[
+                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200',
+                                    u.is_active ? 'bg-emerald-500' : 'bg-slate-600',
+                                    busyId === u.id ? 'opacity-50 cursor-wait' : '',
+                                ]"
+                            >
+                                <span
+                                    :class="[
+                                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200',
+                                        u.is_active ? 'translate-x-5' : 'translate-x-0',
+                                    ]"
+                                />
+                            </button>
                         </td>
                         <td class="px-3 py-2.5 text-xs text-slate-400">{{ formatDate(u.created_at) }}</td>
                         <td class="px-3 py-2.5 text-right">
-                            <button @click="openEdit(u)" class="text-indigo-300 hover:text-indigo-200 text-xs font-semibold">Editar</button>
+                            <div class="inline-flex items-center gap-3">
+                                <button @click="openEdit(u)" class="text-indigo-300 hover:text-indigo-200 text-xs font-semibold">Editar</button>
+                                <button
+                                    @click="confirmDelete(u)"
+                                    :disabled="u.id === auth.user?.id"
+                                    :title="u.id === auth.user?.id ? 'No podés eliminarte a vos mismo' : 'Eliminar definitivamente'"
+                                    class="text-xs font-semibold text-rose-300 hover:text-rose-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                                >Eliminar</button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -137,13 +160,59 @@
                 </div>
             </div>
         </Teleport>
+
+        <!-- Modal de confirmación para eliminar -->
+        <Teleport to="body">
+            <div v-if="confirmingDelete" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" @click.self="confirmingDelete = null">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">⚠️</span>
+                        <h2 class="text-xl font-bold text-slate-100">Eliminar usuario</h2>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-4">
+                        Estás a punto de <strong class="text-rose-300">eliminar definitivamente</strong> a:
+                    </p>
+                    <div class="bg-slate-900/60 border border-slate-700 rounded-lg p-3 mb-4">
+                        <p class="font-semibold text-slate-100">{{ confirmingDelete.name }}</p>
+                        <p class="text-xs text-slate-400">{{ confirmingDelete.email }}</p>
+                    </div>
+                    <ul class="text-xs text-slate-400 space-y-1 mb-5 list-disc list-inside">
+                        <li>Se borrará el usuario y todos sus datos asociados (respuestas, progreso, bookmarks, suscripciones).</li>
+                        <li>Esta acción <strong class="text-rose-300">no se puede deshacer</strong>.</li>
+                        <li v-if="confirmingDelete.id === auth.user?.id" class="text-amber-300 font-semibold">
+                            ⚠ Estás eliminándote a vos mismo — vas a ser deslogueado.
+                        </li>
+                    </ul>
+                    <p class="text-sm text-slate-300 mb-2">
+                        Para confirmar, escribí <code class="px-1.5 py-0.5 rounded bg-slate-900 text-rose-300 font-mono text-xs">{{ confirmText }}</code>:
+                    </p>
+                    <input
+                        v-model="deleteConfirmInput"
+                        type="text"
+                        :placeholder="confirmText"
+                        class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 text-sm mb-4 font-mono"
+                        @keyup.enter="performDelete"
+                    />
+                    <div class="flex gap-2">
+                        <button type="button" @click="confirmingDelete = null" class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-semibold">Cancelar</button>
+                        <button
+                            type="button"
+                            @click="performDelete"
+                            :disabled="deleteConfirmInput !== confirmText || deleting"
+                            class="flex-1 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold"
+                        >{{ deleting ? 'Eliminando…' : 'Eliminar definitivamente' }}</button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
     </AdminLayout>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import axios from 'axios';
 import AdminLayout from '@/components/AdminLayout.vue';
+import { useAuthStore } from '@/stores/auth';
 
 interface UserRow {
     id: number;
@@ -158,12 +227,21 @@ interface UserRow {
     created_at: string;
 }
 
+const auth = useAuthStore();
+
 const users = ref<UserRow[]>([]);
 const loading = ref(false);
 const saving = ref(false);
+const busyId = ref<number | null>(null); // para que el switch no parpadee durante la request
 const meta = reactive({ current_page: 1, last_page: 1, per_page: 20, total: 0 });
 const filters = reactive({ search: '', role: '', is_premium: '', is_active: '' });
 const editing = ref<any>(null);
+
+// Modal de eliminación
+const confirmingDelete = ref<UserRow | null>(null);
+const deleteConfirmInput = ref('');
+const deleting = ref(false);
+const confirmText = computed(() => confirmingDelete.value?.email ?? '');
 
 let searchTimer: number | null = null;
 function debouncedLoad() {
@@ -182,6 +260,8 @@ async function load(page = 1) {
         const { data } = await axios.get('/admin/users', { params });
         users.value = data.data;
         Object.assign(meta, data.meta);
+    } catch (e: any) {
+        showError(e, 'Error al cargar usuarios');
     } finally {
         loading.value = false;
     }
@@ -212,12 +292,10 @@ async function save() {
         if (editing.value.id && !payload.password) {
             delete payload.password;
         }
-        // Roles viene como array; el backend espera 'role' string
         if (Array.isArray(payload.roles)) {
             payload.role = payload.roles[0] ?? 'usuario';
             delete payload.roles;
         }
-        // Premium_until vacío → null
         if (payload.premium_until === '') {
             payload.premium_until = null;
         }
@@ -229,22 +307,94 @@ async function save() {
         editing.value = null;
         await load(meta.current_page);
     } catch (e: any) {
-        const errs = e.response?.data?.errors;
-        const firstError = errs ? Object.values(errs).flat()[0] : null;
-        alert(firstError || e.response?.data?.message || 'Error al guardar');
+        showError(e, 'Error al guardar');
     } finally {
         saving.value = false;
     }
 }
 
 async function togglePremium(u: UserRow) {
-    await axios.patch(`/admin/users/${u.id}`, { is_premium: !u.is_premium });
+    busyId.value = u.id;
+    const previous = u.is_premium;
     u.is_premium = !u.is_premium;
+    try {
+        await axios.patch(`/admin/users/${u.id}`, { is_premium: u.is_premium });
+    } catch (e: any) {
+        u.is_premium = previous; // rollback
+        showError(e, 'No se pudo cambiar el plan');
+    } finally {
+        busyId.value = null;
+    }
 }
 
 async function toggleActive(u: UserRow) {
-    await axios.patch(`/admin/users/${u.id}`, { is_active: !u.is_active });
-    u.is_active = !u.is_active;
+    // Si el usuario es admin y solo queda él, no permitir desactivar
+    const isAdmin = u.roles.includes('admin');
+
+    // Advertencia si se está desactivando a sí mismo
+    if (u.id === auth.user?.id && u.is_active) {
+        const ok = confirm(
+            '⚠ Vas a desactivarte a vos mismo.\n\n' +
+            'Tu sesión va a cerrarse inmediatamente y no vas a poder ' +
+            'iniciar sesión otra vez hasta que otro admin te reactive.\n\n' +
+            '¿Continuar?',
+        );
+        if (!ok) return;
+    }
+
+    busyId.value = u.id;
+    const previous = u.is_active;
+    const next = !u.is_active;
+    u.is_active = next;
+    try {
+        const { data } = await axios.patch(`/admin/users/${u.id}`, { is_active: next });
+        // Si la operación nos afectó a nosotros mismos, forzar logout
+        if (data?.self_affected) {
+            await auth.logout();
+            window.location.href = '/login';
+            return;
+        }
+    } catch (e: any) {
+        u.is_active = previous; // rollback
+        showError(e, isAdmin ? 'No se puede desactivar al último admin' : 'No se pudo cambiar el estado');
+    } finally {
+        busyId.value = null;
+    }
+}
+
+function confirmDelete(u: UserRow) {
+    if (u.id === auth.user?.id) return; // no se puede eliminar a sí mismo
+    deleteConfirmInput.value = '';
+    confirmingDelete.value = u;
+}
+
+async function performDelete() {
+    if (!confirmingDelete.value) return;
+    if (deleteConfirmInput.value !== confirmText.value) return;
+    deleting.value = true;
+    const target = confirmingDelete.value;
+    try {
+        const { data } = await axios.delete(`/admin/users/${target.id}/force`);
+        confirmingDelete.value = null;
+        deleteConfirmInput.value = '';
+        await load(meta.current_page);
+        if (data?.self_affected) {
+            // Por si el backend lo permitiera en algún caso futuro
+            await auth.logout();
+            window.location.href = '/login';
+        }
+    } catch (e: any) {
+        showError(e, 'No se pudo eliminar el usuario');
+    } finally {
+        deleting.value = false;
+    }
+}
+
+function showError(e: any, fallback: string) {
+    const msg = e.response?.data?.message;
+    const errs = e.response?.data?.errors;
+    const firstFieldError = errs ? Object.values(errs).flat()[0] : null;
+    alert(msg || firstFieldError || fallback);
 }
 
 function formatDate(iso: string | null): string {

@@ -62,6 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/users', [AdminController::class, 'storeUser']);
         Route::patch('/users/{id}', [AdminController::class, 'updateUser'])->whereNumber('id');
         Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->whereNumber('id');
+        Route::delete('/users/{id}/force', [AdminController::class, 'forceDeleteUser'])->whereNumber('id');
         Route::post('/users/{id}/restore', [AdminController::class, 'restoreUser'])->whereNumber('id');
         Route::get('/questions', [AdminController::class, 'questions']);
         Route::get('/questions/{id}', [AdminController::class, 'showQuestion'])->whereNumber('id');

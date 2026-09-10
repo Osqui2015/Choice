@@ -194,6 +194,20 @@ class AdminController extends Controller
             'accepts_promotions' => ['nullable', 'boolean'],
         ]);
 
+        $isCurrentlyAdmin = $user->hasRole('admin');
+
+        // Bloquear acciones que dejarian al sistema sin admins activos
+        $willDeactivate = array_key_exists('is_active', $data) && ! (bool) $data['is_active'];
+        $willDemote     = array_key_exists('role', $data) && $data['role'] !== 'admin' && $isCurrentlyAdmin;
+
+        if (($willDeactivate || $willDemote) && $isCurrentlyAdmin && $this->countActiveAdmins() <= 1) {
+            return response()->json([
+                'message' => 'No podés desactivar ni cambiar el rol del último admin activo. Promové a otro usuario a admin primero.',
+            ], 422);
+        }
+
+        $isSelf = $request->user()?->id === $user->id;
+
         if (! empty($data['password'])) {
             $user->password = $data['password'];
         }
@@ -221,17 +235,54 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'Usuario actualizado',
             'user' => $this->serializeUser($user->fresh('roles')),
+            'self_affected' => $isSelf && ($willDeactivate || ($data['role'] ?? null) === 'usuario'),
         ]);
     }
 
-    public function deleteUser(int $id): JsonResponse
+    public function deleteUser(Request $request, int $id): JsonResponse
     {
         $user = User::findOrFail($id);
+
+        if ($user->hasRole('admin') && $this->countActiveAdmins() <= 1) {
+            return response()->json([
+                'message' => 'No podés deshabilitar al último admin activo. Promové a otro usuario a admin primero.',
+            ], 422);
+        }
+
+        $isSelf = $request->user()?->id === $user->id;
         $user->is_active = false;
         $user->tokens()->delete(); // mata todas las sesiones
         $user->save();
 
-        return response()->json(['message' => 'Usuario deshabilitado']);
+        return response()->json([
+            'message' => 'Usuario deshabilitado',
+            'self_affected' => $isSelf,
+        ]);
+    }
+
+    /**
+     * Hard delete: elimina al usuario y todos sus datos asociados en
+     * cascada (las FKs ya tienen cascadeOnDelete en las migraciones).
+     * No se puede usar sobre el último admin activo.
+     */
+    public function forceDeleteUser(Request $request, int $id): JsonResponse
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->hasRole('admin') && $this->countActiveAdmins() <= 1) {
+            return response()->json([
+                'message' => 'No podés eliminar al último admin activo. Promové a otro usuario a admin primero.',
+            ], 422);
+        }
+
+        $isSelf = $request->user()?->id === $user->id;
+        $user->tokens()->delete();
+        $user->delete(); // hard delete, cascade en FKs
+
+        return response()->json([
+            'message' => 'Usuario eliminado definitivamente',
+            'self_affected' => $isSelf,
+        ]);
     }
 
     public function restoreUser(int $id): JsonResponse
@@ -402,6 +453,15 @@ class AdminController extends Controller
     // ============================================================
     //  HELPERS
     // ============================================================
+
+    /** Cuenta admins con is_active = true. */
+    private function countActiveAdmins(): int
+    {
+        return User::query()
+            ->where('is_active', true)
+            ->whereHas('roles', fn ($q) => $q->where('name', 'admin'))
+            ->count();
+    }
 
     private function serializeUser(User $u): array
     {
