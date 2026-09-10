@@ -7,10 +7,10 @@
             <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <h2 class="text-xl font-bold text-white">{{ plan.name }}</h2>
+                        <h2 class="text-xl font-bold text-slate-100">{{ plan.name }}</h2>
                         <p class="text-sm text-slate-400">{{ plan.formatted_price }} por {{ plan.duration_days }} días</p>
                     </div>
-                    <button @click="onClose" class="text-slate-400 hover:text-white text-2xl leading-none">×</button>
+                    <button @click="onClose" class="text-slate-400 hover:text-slate-100 text-2xl leading-none">×</button>
                 </div>
 
                 <p v-if="plan.description" class="text-sm text-slate-300 mb-4">{{ plan.description }}</p>
@@ -34,7 +34,7 @@
                                 :disabled="!selected.includes(sp.id) && selected.length >= plan.max_specialties!"
                                 class="rounded text-indigo-500 focus:ring-indigo-500 focus:ring-offset-0 bg-slate-700 border-slate-600 disabled:opacity-50"
                             />
-                            <span class="text-sm text-white">{{ sp.name }}</span>
+                            <span class="text-sm text-slate-100">{{ sp.name }}</span>
                             <span class="text-xs text-slate-500 ml-auto">{{ sp.code }}</span>
                         </label>
                     </div>
@@ -53,7 +53,7 @@
                         v-model="notes"
                         rows="2"
                         maxlength="500"
-                        class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                        class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
                         placeholder="Ej: Quiero preparar el final de clínica, soy alumno de 5to año..."
                     />
                 </div>

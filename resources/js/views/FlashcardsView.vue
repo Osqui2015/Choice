@@ -4,17 +4,17 @@
         <main class="max-w-2xl w-full mx-auto px-4 sm:px-6 py-6">
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-white">📇 Flashcards</h1>
+                    <h1 class="text-2xl font-bold text-slate-100">📇 Flashcards</h1>
                     <p class="text-sm text-slate-400 mt-1">Tocá la tarjeta para girar</p>
                 </div>
-                <router-link to="/study" class="text-sm text-slate-400 hover:text-white">← Volver</router-link>
+                <router-link to="/study" class="text-sm text-slate-400 hover:text-slate-100">← Volver</router-link>
             </div>
 
             <div v-if="loading" class="text-center py-12 text-slate-400">Cargando…</div>
 
             <div v-else-if="!cards.length" class="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
                 <p class="text-3xl mb-2">📇</p>
-                <p class="text-white font-semibold">No hay flashcards disponibles.</p>
+                <p class="text-slate-100 font-semibold">No hay flashcards disponibles.</p>
             </div>
 
             <div v-else>
@@ -47,13 +47,13 @@
                         <!-- Frente -->
                         <div class="absolute inset-0 [backface-visibility:hidden] bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
                             <p class="text-xs uppercase tracking-wider text-slate-400 mb-3">Pregunta</p>
-                            <p class="text-lg text-white whitespace-pre-line">{{ current.front }}</p>
+                            <p class="text-lg text-slate-100 whitespace-pre-line">{{ current.front }}</p>
                             <p class="text-xs text-slate-500 mt-4">click para ver respuesta</p>
                         </div>
                         <!-- Dorso -->
                         <div class="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-emerald-900/40 border-2 border-emerald-700 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
                             <p class="text-xs uppercase tracking-wider text-emerald-300 mb-3">Respuesta</p>
-                            <p class="text-lg text-white whitespace-pre-line">{{ current.back }}</p>
+                            <p class="text-lg text-slate-100 whitespace-pre-line">{{ current.back }}</p>
                             <p v-if="current.justification" class="text-xs text-slate-300 mt-3 italic">{{ current.justification }}</p>
                         </div>
                     </div>

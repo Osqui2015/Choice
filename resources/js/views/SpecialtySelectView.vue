@@ -3,7 +3,7 @@
         <Navbar />
         <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-white">Elegí qué estudiar</h1>
+                <h1 class="text-3xl font-bold text-slate-100">Elegí qué estudiar</h1>
                 <p class="text-slate-400 mt-1">
                     <span v-if="loading">Cargando catálogo…</span>
                     <span v-else>{{ totalQuestions.toLocaleString() }} preguntas MCQ · {{ totalFlashcards.toLocaleString() }} flashcards clínicas</span>
@@ -68,7 +68,7 @@
                 class="mb-6 p-4 rounded-xl border-2 bg-gradient-to-r from-emerald-500/10 to-cyan-500/5 border-emerald-500/30 flex items-center justify-between flex-wrap gap-3"
             >
                 <div>
-                    <p class="text-sm text-white font-semibold flex items-center gap-2">
+                    <p class="text-sm text-slate-100 font-semibold flex items-center gap-2">
                         <span class="text-xl">✅</span>
                         Plan <span class="text-emerald-300">{{ sub.active.plan.name }}</span> activo
                         <span v-if="sub.active.is_unlimited" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 font-bold">
@@ -86,7 +86,7 @@
                 <div class="flex gap-2">
                     <router-link
                         to="/my-subscription"
-                        class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-semibold transition"
+                        class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 text-xs font-semibold transition"
                     >
                         Gestionar
                     </router-link>
@@ -119,7 +119,7 @@
                 <div class="flex items-center justify-between flex-wrap gap-3">
                     <div class="flex-1">
                         <p class="text-sm text-slate-300">
-                            <span v-if="!sub.freeQuota.chosen_specialty" class="font-semibold text-white">
+                            <span v-if="!sub.freeQuota.chosen_specialty" class="font-semibold text-slate-100">
                                 🆓 Empezá con el plan gratuito: elegí una materia y tenés 5 preguntas por día.
                             </span>
                             <span v-else-if="sub.freeQuota.is_exhausted" class="text-amber-300 font-semibold">
@@ -181,7 +181,7 @@
                     ]"
                 >
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-lg font-bold text-white">{{ s.name }}</h3>
+                        <h3 class="text-lg font-bold text-slate-100">{{ s.name }}</h3>
                         <span
                             v-if="!hasAccessTo(s.id)"
                             class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/30"
@@ -231,7 +231,7 @@
                         class="p-5 rounded-2xl border bg-slate-800/50 border-slate-700 hover:border-emerald-500/50 hover:bg-slate-800 transition text-left"
                     >
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-lg font-bold text-white">{{ s.name }}</h3>
+                            <h3 class="text-lg font-bold text-slate-100">{{ s.name }}</h3>
                             <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">{{ s.code }}</span>
                         </div>
                         <div class="text-sm text-slate-300">{{ s.stats?.total_flashcards ?? 0 }} flashcards disponibles</div>

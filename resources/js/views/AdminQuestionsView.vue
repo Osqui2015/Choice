@@ -1,7 +1,7 @@
 <template>
     <AdminLayout>
         <div class="space-y-4">
-            <h1 class="text-2xl font-bold text-white">❓ Preguntas</h1>
+            <h1 class="text-2xl font-bold text-slate-100">❓ Preguntas</h1>
 
             <div class="grid sm:grid-cols-3 gap-2">
                 <input
@@ -9,13 +9,13 @@
                     @input="debouncedLoad"
                     type="text"
                     placeholder="Buscar en el enunciado…"
-                    class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500"
+                    class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-100 placeholder-slate-500"
                 />
-                <select v-model="filters.specialty_id" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white">
+                <select v-model="filters.specialty_id" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-100">
                     <option value="">Todas las especialidades</option>
                     <option v-for="s in specialties" :key="s.id" :value="s.id">{{ s.name }}</option>
                 </select>
-                <select v-model="filters.is_active" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white">
+                <select v-model="filters.is_active" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-100">
                     <option value="">Todas</option>
                     <option value="true">Solo activas</option>
                     <option value="false">Solo inactivas</option>
@@ -42,7 +42,7 @@
                             <td class="px-3 py-2 text-slate-200 line-clamp-2 max-w-md">{{ q.statement }}</td>
                             <td class="px-3 py-2 text-xs text-slate-400">{{ q.specialty?.name ?? '—' }}</td>
                             <td class="px-3 py-2">
-                                <span class="px-2 py-0.5 rounded font-mono text-xs font-bold bg-slate-700 text-white">{{ q.correct_answer?.toUpperCase() }}</span>
+                                <span class="px-2 py-0.5 rounded font-mono text-xs font-bold bg-slate-700 text-slate-100">{{ q.correct_answer?.toUpperCase() }}</span>
                             </td>
                             <td class="px-3 py-2">
                                 <button
@@ -72,11 +72,11 @@
         <Teleport to="body">
             <div v-if="editing" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" @click.self="editing = null">
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-                    <h2 class="text-xl font-bold text-white mb-4">Pregunta #{{ editing.code_number }}</h2>
+                    <h2 class="text-xl font-bold text-slate-100 mb-4">Pregunta #{{ editing.code_number }}</h2>
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Enunciado</label>
-                            <textarea v-model="editing.statement" rows="3" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm"></textarea>
+                            <textarea v-model="editing.statement" rows="3" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 text-sm"></textarea>
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-2">Opciones (tildá la correcta)</label>
@@ -95,7 +95,7 @@
                                     <textarea
                                         v-model="opt.text"
                                         rows="2"
-                                        class="w-full px-2 py-1 rounded bg-slate-900 border border-slate-700 text-white text-sm"
+                                        class="w-full px-2 py-1 rounded bg-slate-900 border border-slate-700 text-slate-100 text-sm"
                                     ></textarea>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@
                         </label>
                     </div>
                     <div class="flex gap-2 pt-4">
-                        <button @click="editing = null" class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm">Cancelar</button>
+                        <button @click="editing = null" class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm">Cancelar</button>
                         <button @click="save" :disabled="saving" class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold disabled:opacity-50">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
                     </div>
                 </div>

@@ -4,17 +4,17 @@
         <main class="max-w-3xl w-full mx-auto px-4 sm:px-6 py-6">
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-white">⭐ Preguntas Guardadas</h1>
+                    <h1 class="text-2xl font-bold text-slate-100">⭐ Preguntas Guardadas</h1>
                     <p class="text-sm text-slate-400 mt-1">Tus favoritas para repasar cuando quieras</p>
                 </div>
-                <router-link to="/study" class="text-sm text-slate-400 hover:text-white">← Volver</router-link>
+                <router-link to="/study" class="text-sm text-slate-400 hover:text-slate-100">← Volver</router-link>
             </div>
 
             <div v-if="loading" class="text-center py-12 text-slate-400">Cargando…</div>
 
             <div v-else-if="!questions.length" class="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
                 <p class="text-3xl mb-2">⭐</p>
-                <p class="text-white font-semibold">No tenés preguntas guardadas todavía</p>
+                <p class="text-slate-100 font-semibold">No tenés preguntas guardadas todavía</p>
                 <p class="text-sm text-slate-400 mt-1">Tocá la estrella en cualquier pregunta para guardarla acá.</p>
             </div>
 

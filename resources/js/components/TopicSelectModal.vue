@@ -13,7 +13,7 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-2xl">{{ specialtyIcon }}</span>
-                            <h2 class="text-xl font-bold text-white">{{ specialty.name }}</h2>
+                            <h2 class="text-xl font-bold text-slate-100">{{ specialty.name }}</h2>
                         </div>
                         <p class="text-xs text-slate-400 mt-1">
                             Seleccioná un tema específico para practicar o estudiá toda la materia.
@@ -21,7 +21,7 @@
                     </div>
                     <button
                         @click="onClose"
-                        class="text-slate-400 hover:text-white text-2xl leading-none p-1 rounded-lg hover:bg-slate-700/50 transition"
+                        class="text-slate-400 hover:text-slate-100 text-2xl leading-none p-1 rounded-lg hover:bg-slate-700/50 transition"
                     >
                         ×
                     </button>
@@ -39,7 +39,7 @@
                         <span
                             v-if="search"
                             @click="search = ''"
-                            class="absolute right-3 top-2 text-xs text-slate-400 hover:text-white cursor-pointer"
+                            class="absolute right-3 top-2 text-xs text-slate-400 hover:text-slate-100 cursor-pointer"
                         >
                             ✕
                         </span>
@@ -57,7 +57,7 @@
                         <div class="flex items-center gap-3">
                             <span class="text-xl group-hover:scale-110 transition-transform">🎯</span>
                             <div>
-                                <p class="text-sm font-bold text-white group-hover:text-indigo-200 transition-colors">
+                                <p class="text-sm font-bold text-slate-100 group-hover:text-indigo-200 transition-colors">
                                     Todos los temas de {{ specialty.name }}
                                 </p>
                                 <p class="text-xs text-slate-400">Preguntas aleatorias de toda la materia</p>

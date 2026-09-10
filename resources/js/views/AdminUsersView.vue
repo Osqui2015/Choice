@@ -7,18 +7,18 @@
 
         <!-- Filtros -->
         <div class="grid sm:grid-cols-4 gap-3 mb-4">
-            <input v-model="filters.search" @input="debouncedLoad" type="text" placeholder="Buscar por nombre, email o WhatsApp…" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm" />
-            <select v-model="filters.role" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm">
+            <input v-model="filters.search" @input="debouncedLoad" type="text" placeholder="Buscar por nombre, email o WhatsApp…" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm" />
+            <select v-model="filters.role" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm">
                 <option value="">Todos los roles</option>
                 <option value="admin">Admin</option>
                 <option value="usuario">Usuario</option>
             </select>
-            <select v-model="filters.is_premium" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm">
+            <select v-model="filters.is_premium" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm">
                 <option value="">Todos</option>
                 <option value="true">Premium</option>
                 <option value="false">Free</option>
             </select>
-            <select v-model="filters.is_active" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm">
+            <select v-model="filters.is_active" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm">
                 <option value="">Todos</option>
                 <option value="true">Activos</option>
                 <option value="false">Inactivos</option>
@@ -44,11 +44,11 @@
                     <tr v-else-if="!users.length"><td colspan="7" class="px-3 py-8 text-center text-slate-500">No hay usuarios con esos filtros.</td></tr>
                     <tr v-for="u in users" v-else :key="u.id" class="border-t border-slate-700/60">
                         <td class="px-3 py-2.5">
-                            <p class="font-semibold text-white">{{ u.name }}</p>
+                            <p class="font-semibold text-slate-100">{{ u.name }}</p>
                             <p class="text-xs text-slate-400">{{ u.email }}</p>
                         </td>
                         <td class="px-3 py-2.5">
-                            <p v-if="u.phone" class="text-sm text-white font-mono">{{ formatPhone(u.phone) }}</p>
+                            <p v-if="u.phone" class="text-sm text-slate-100 font-mono">{{ formatPhone(u.phone) }}</p>
                             <p v-else class="text-xs text-slate-500">—</p>
                             <p v-if="u.accepts_promotions" class="text-[10px] text-emerald-400">📣 Acepta promos</p>
                         </td>
@@ -90,27 +90,27 @@
         <Teleport to="body">
             <div v-if="editing" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" @click.self="editing = null">
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
-                    <h2 class="text-xl font-bold text-white mb-4">{{ editing.id ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+                    <h2 class="text-xl font-bold text-slate-100 mb-4">{{ editing.id ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
                     <form @submit.prevent="save" class="space-y-3">
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Nombre completo</label>
-                            <input v-model="editing.name" type="text" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            <input v-model="editing.name" type="text" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Email</label>
-                            <input v-model="editing.email" type="email" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            <input v-model="editing.email" type="email" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">WhatsApp <span class="text-slate-500">(con código de país)</span></label>
-                            <input v-model="editing.phone" type="tel" inputmode="tel" placeholder="+54 9 11 1234-5678" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            <input v-model="editing.phone" type="tel" inputmode="tel" placeholder="+54 9 11 1234-5678" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Contraseña {{ editing.id ? '(dejar vacío para no cambiar)' : '' }}</label>
-                            <input v-model="editing.password" type="password" :required="!editing.id" minlength="8" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            <input v-model="editing.password" type="password" :required="!editing.id" minlength="8" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Rol</label>
-                            <select v-model="editing.role" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white">
+                            <select v-model="editing.role" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100">
                                 <option value="usuario">Usuario</option>
                                 <option value="admin">Admin</option>
                             </select>
@@ -130,7 +130,7 @@
                             Acepta promociones por WhatsApp
                         </label>
                         <div class="flex gap-2 pt-2">
-                            <button type="button" @click="editing = null" class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm">Cancelar</button>
+                            <button type="button" @click="editing = null" class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm">Cancelar</button>
                             <button type="submit" :disabled="saving" class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold disabled:opacity-50">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
                         </div>
                     </form>

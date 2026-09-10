@@ -3,7 +3,7 @@
         <Navbar />
         <main class="max-w-4xl mx-auto px-4 sm:px-6 py-6">
             <div class="mb-6">
-                <h1 class="text-2xl font-bold text-white">¡Hola {{ auth.user?.name }}!</h1>
+                <h1 class="text-2xl font-bold text-slate-100">¡Hola {{ auth.user?.name }}!</h1>
                 <p class="text-slate-400 mt-1">Tu progreso en Choice</p>
             </div>
 
@@ -36,7 +36,7 @@
 
                 <!-- Barras por especialidad -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5">
-                    <h2 class="text-lg font-bold text-white mb-4">📚 Rendimiento por Especialidad</h2>
+                    <h2 class="text-lg font-bold text-slate-100 mb-4">📚 Rendimiento por Especialidad</h2>
                     <div class="space-y-4">
                         <div v-for="s in stats.by_specialty" :key="s.id">
                             <div class="flex items-center justify-between mb-1.5">
@@ -66,28 +66,28 @@
                         class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-indigo-500/50 transition text-center"
                     >
                         <div class="text-3xl mb-1">📖</div>
-                        <div class="text-sm font-semibold text-white">Estudiar</div>
+                        <div class="text-sm font-semibold text-slate-100">Estudiar</div>
                     </router-link>
                     <router-link
                         to="/errors"
                         class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-rose-500/50 transition text-center"
                     >
                         <div class="text-3xl mb-1">🔄</div>
-                        <div class="text-sm font-semibold text-white">Banco de Fallos</div>
+                        <div class="text-sm font-semibold text-slate-100">Banco de Fallos</div>
                     </router-link>
                     <router-link
                         to="/bookmarked"
                         class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-yellow-500/50 transition text-center"
                     >
                         <div class="text-3xl mb-1">⭐</div>
-                        <div class="text-sm font-semibold text-white">Guardadas</div>
+                        <div class="text-sm font-semibold text-slate-100">Guardadas</div>
                     </router-link>
                     <router-link
                         to="/flashcards"
                         class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500/50 transition text-center"
                     >
                         <div class="text-3xl mb-1">📇</div>
-                        <div class="text-sm font-semibold text-white">Flashcards</div>
+                        <div class="text-sm font-semibold text-slate-100">Flashcards</div>
                     </router-link>
                 </div>
             </div>

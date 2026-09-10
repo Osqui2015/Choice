@@ -3,7 +3,7 @@
         <div class="w-full max-w-md bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl shadow-2xl p-8">
             <div class="text-center mb-8">
                 <img src="/icons/icon-192.png" alt="Choice" class="w-16 h-16 mx-auto mb-3 rounded-2xl shadow-lg shadow-indigo-500/25" />
-                <h1 class="text-3xl font-bold text-white tracking-tight">Choice</h1>
+                <h1 class="text-3xl font-bold text-slate-100 tracking-tight">Choice</h1>
                 <p class="text-slate-400 mt-1 text-sm">Iniciá sesión para continuar</p>
             </div>
 
@@ -15,7 +15,7 @@
                         type="email"
                         required
                         autocomplete="email"
-                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         placeholder="tu@email.com"
                     />
                 </div>
@@ -27,7 +27,7 @@
                         type="password"
                         required
                         autocomplete="current-password"
-                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         placeholder="••••••••"
                     />
                 </div>

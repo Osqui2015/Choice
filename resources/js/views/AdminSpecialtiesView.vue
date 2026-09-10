@@ -2,7 +2,7 @@
     <AdminLayout>
         <div class="space-y-4">
             <div class="flex items-center justify-between flex-wrap gap-3">
-                <h1 class="text-2xl font-bold text-white">📚 Especialidades</h1>
+                <h1 class="text-2xl font-bold text-slate-100">📚 Especialidades</h1>
                 <button
                     @click="openCreate"
                     class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold"
@@ -27,7 +27,7 @@
                         <tr v-else-if="!rows.length"><td colspan="7" class="px-3 py-8 text-center text-slate-500">Sin especialidades.</td></tr>
                         <tr v-for="s in rows" v-else :key="s.id" class="border-t border-slate-700/60">
                             <td class="px-3 py-2.5 font-mono text-xs text-slate-300">{{ s.code }}</td>
-                            <td class="px-3 py-2.5 font-semibold text-white">{{ s.name }}</td>
+                            <td class="px-3 py-2.5 font-semibold text-slate-100">{{ s.name }}</td>
                             <td class="px-3 py-2.5">
                                 <span v-if="s.color" class="inline-block w-5 h-5 rounded border border-slate-700" :style="{ backgroundColor: s.color }"></span>
                                 <span v-else class="text-slate-500 text-xs">—</span>
@@ -53,34 +53,34 @@
         <Teleport to="body">
             <div v-if="editing" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" @click.self="editing = null">
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6">
-                    <h2 class="text-xl font-bold text-white mb-4">{{ editing.id ? 'Editar' : 'Nueva' }} Especialidad</h2>
+                    <h2 class="text-xl font-bold text-slate-100 mb-4">{{ editing.id ? 'Editar' : 'Nueva' }} Especialidad</h2>
                     <form @submit.prevent="save" class="space-y-3">
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Código (ej: 04_NEUMONOLOGIA)</label>
-                            <input v-model="editing.code" type="text" required :disabled="!!editing.id" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white disabled:opacity-50" />
+                            <input v-model="editing.code" type="text" required :disabled="!!editing.id" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 disabled:opacity-50" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Nombre</label>
-                            <input v-model="editing.name" type="text" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            <input v-model="editing.name" type="text" required class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Color (hex)</label>
-                            <input v-model="editing.color" type="text" placeholder="#8b5cf6" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            <input v-model="editing.color" type="text" placeholder="#8b5cf6" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Icono</label>
-                            <input v-model="editing.icon" type="text" placeholder="kidney" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            <input v-model="editing.icon" type="text" placeholder="kidney" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100" />
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Orden</label>
-                            <input v-model.number="editing.sort_order" type="number" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white" />
+                            <input v-model.number="editing.sort_order" type="number" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100" />
                         </div>
                         <label class="flex items-center gap-2 text-sm text-slate-200">
                             <input v-model="editing.is_active" type="checkbox" class="w-4 h-4" />
                             Activa (visible para usuarios)
                         </label>
                         <div class="flex gap-2 pt-2">
-                            <button type="button" @click="editing = null" class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm">Cancelar</button>
+                            <button type="button" @click="editing = null" class="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm">Cancelar</button>
                             <button type="submit" :disabled="saving" class="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold disabled:opacity-50">{{ saving ? 'Guardando…' : 'Guardar' }}</button>
                         </div>
                     </form>

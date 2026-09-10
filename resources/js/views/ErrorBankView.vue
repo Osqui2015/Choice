@@ -4,12 +4,12 @@
         <main class="max-w-3xl w-full mx-auto px-4 sm:px-6 py-6">
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-white">🔄 Banco de Fallos</h1>
+                    <h1 class="text-2xl font-bold text-slate-100">🔄 Banco de Fallos</h1>
                     <p class="text-sm text-slate-400 mt-1">Preguntas que fallaste y aún no re-acertaste</p>
                 </div>
                 <router-link
                     to="/study"
-                    class="text-sm text-slate-400 hover:text-white"
+                    class="text-sm text-slate-400 hover:text-slate-100"
                 >← Volver</router-link>
             </div>
 
@@ -17,7 +17,7 @@
 
             <div v-else-if="!questions.length" class="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center">
                 <p class="text-3xl mb-2">🎉</p>
-                <p class="text-white font-semibold">¡No tenés preguntas pendientes!</p>
+                <p class="text-slate-100 font-semibold">¡No tenés preguntas pendientes!</p>
                 <p class="text-sm text-slate-400 mt-1">Andá a <router-link to="/study" class="text-indigo-300 underline">estudiar</router-link> para acumular práctica.</p>
             </div>
 

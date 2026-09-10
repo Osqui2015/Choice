@@ -7,13 +7,13 @@
             <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <h2 class="text-xl font-bold text-white">Elegí tu materia gratis</h2>
+                        <h2 class="text-xl font-bold text-slate-100">Elegí tu materia gratis</h2>
                         <p class="text-sm text-slate-400 mt-0.5">
                             Vas a tener <strong class="text-emerald-300">5 preguntas por día</strong> de la materia que elijas.
                             Podés cambiarla cuando quieras.
                         </p>
                     </div>
-                    <button @click="onClose" class="text-slate-400 hover:text-white text-2xl leading-none">×</button>
+                    <button @click="onClose" class="text-slate-400 hover:text-slate-100 text-2xl leading-none">×</button>
                 </div>
 
                 <div class="space-y-2 max-h-72 overflow-y-auto">
@@ -26,7 +26,7 @@
                     >
                         <span class="text-2xl">📚</span>
                         <div>
-                            <p class="text-white font-semibold">{{ sp.name }}</p>
+                            <p class="text-slate-100 font-semibold">{{ sp.name }}</p>
                             <p class="text-xs text-slate-500">{{ sp.code }}</p>
                         </div>
                     </button>

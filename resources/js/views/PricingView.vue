@@ -4,7 +4,7 @@
         <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
             <!-- Header -->
             <div class="text-center mb-10">
-                <h1 class="text-3xl sm:text-4xl font-bold text-white">Elegí tu plan</h1>
+                <h1 class="text-3xl sm:text-4xl font-bold text-slate-100">Elegí tu plan</h1>
                 <p class="text-slate-400 mt-2 max-w-2xl mx-auto">
                     Accedé a las <strong class="text-emerald-400">+3.230 preguntas MCQ</strong> y
                     <strong class="text-emerald-400">328 flashcards clínicas</strong>.
@@ -29,7 +29,7 @@
                     </p>
                     <p class="text-emerald-200/70 text-sm mt-0.5">
                         Vence el {{ formatDate(sub.active.expires_at) }}.
-                        <router-link to="/my-subscription" class="underline hover:text-white">Ver detalle</router-link>
+                        <router-link to="/my-subscription" class="underline hover:text-slate-100">Ver detalle</router-link>
                     </p>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                     </p>
                     <p class="text-amber-200/70 text-sm mt-0.5">
                         Te avisamos por WhatsApp cuando esté activa.
-                        <router-link to="/my-subscription" class="underline hover:text-white">Ver detalle</router-link>
+                        <router-link to="/my-subscription" class="underline hover:text-slate-100">Ver detalle</router-link>
                     </p>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                 <!-- Free -->
                 <div class="border border-slate-700 rounded-2xl p-5 sm:p-6 bg-slate-800/40 flex flex-col">
                     <p class="text-xs uppercase tracking-wider text-slate-400">Gratuito</p>
-                    <p class="text-3xl sm:text-4xl font-bold text-white mt-1">$0</p>
+                    <p class="text-3xl sm:text-4xl font-bold text-slate-100 mt-1">$0</p>
                     <p class="text-xs text-slate-500">Para probar la app</p>
                     <ul class="mt-5 space-y-2.5 text-sm text-slate-300 flex-1">
                         <li class="flex gap-2"><span class="text-emerald-400">✓</span> 5 preguntas diarias de 1 materia a elección</li>
@@ -79,7 +79,7 @@
                 <!-- Básico -->
                 <div class="border border-slate-700 rounded-2xl p-5 sm:p-6 bg-slate-800/60 flex flex-col">
                     <p class="text-xs uppercase tracking-wider text-indigo-300">Básico</p>
-                    <p class="text-3xl sm:text-4xl font-bold text-white mt-1">{{ planBasico?.formatted_price ?? '—' }}</p>
+                    <p class="text-3xl sm:text-4xl font-bold text-slate-100 mt-1">{{ planBasico?.formatted_price ?? '—' }}</p>
                     <p class="text-xs text-slate-400">por mes · 1 materia a elección</p>
                     <ul class="mt-5 space-y-2.5 text-sm text-slate-200 flex-1">
                         <li class="flex gap-2"><span class="text-emerald-400">✓</span> <strong>Preguntas ilimitadas</strong> de 1 materia</li>
@@ -101,7 +101,7 @@
                 <div class="border-2 border-indigo-500 rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-indigo-600/15 to-purple-600/10 relative flex flex-col">
                     <span class="absolute -top-2.5 right-4 px-2.5 py-0.5 rounded-full bg-indigo-500 text-white text-xs font-bold">RECOMENDADO</span>
                     <p class="text-xs uppercase tracking-wider text-indigo-300">Estudiante</p>
-                    <p class="text-3xl sm:text-4xl font-bold text-white mt-1">{{ planEstudiante?.formatted_price ?? '—' }}</p>
+                    <p class="text-3xl sm:text-4xl font-bold text-slate-100 mt-1">{{ planEstudiante?.formatted_price ?? '—' }}</p>
                     <p class="text-xs text-slate-400">por mes · 3 materias a elección</p>
                     <ul class="mt-5 space-y-2.5 text-sm text-slate-100 flex-1">
                         <li class="flex gap-2"><span class="text-emerald-400">✓</span> <strong>Preguntas ilimitadas</strong> de 3 materias</li>
@@ -122,7 +122,7 @@
                 <!-- Full -->
                 <div class="border border-emerald-500/50 rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-emerald-600/10 to-cyan-600/5 flex flex-col md:col-span-3 lg:col-span-1 md:max-w-sm md:mx-auto md:w-full">
                     <p class="text-xs uppercase tracking-wider text-emerald-300">Full</p>
-                    <p class="text-3xl sm:text-4xl font-bold text-white mt-1">{{ planFull?.formatted_price ?? '—' }}</p>
+                    <p class="text-3xl sm:text-4xl font-bold text-slate-100 mt-1">{{ planFull?.formatted_price ?? '—' }}</p>
                     <p class="text-xs text-slate-400">por mes · TODAS las materias</p>
                     <ul class="mt-5 space-y-2.5 text-sm text-slate-200 flex-1">
                         <li class="flex gap-2"><span class="text-emerald-400">✓</span> <strong>TODO Choice desbloqueado</strong></li>
@@ -143,7 +143,7 @@
 
             <!-- Comparación -->
             <div class="mt-12 p-6 rounded-2xl border border-slate-700 bg-slate-800/40">
-                <h2 class="text-lg font-semibold text-white mb-3">¿Cómo funciona?</h2>
+                <h2 class="text-lg font-semibold text-slate-100 mb-3">¿Cómo funciona?</h2>
                 <ol class="space-y-2.5 text-sm text-slate-300">
                     <li class="flex gap-3"><span class="text-indigo-400 font-bold">1.</span> Elegís tu plan y las materias que querés estudiar.</li>
                     <li class="flex gap-3"><span class="text-indigo-400 font-bold">2.</span> Te enviamos un link directo a nuestro WhatsApp con tu solicitud ya armada.</li>

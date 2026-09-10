@@ -2,7 +2,7 @@
     <div class="min-h-screen bg-slate-900 text-slate-100">
         <Navbar />
         <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-            <h1 class="text-3xl font-bold text-white mb-1">Mi suscripción</h1>
+            <h1 class="text-3xl font-bold text-slate-100 mb-1">Mi suscripción</h1>
             <p class="text-slate-400 mb-8">Estado de tu plan y solicitudes</p>
 
             <div v-if="sub.loading" class="text-slate-400">Cargando…</div>
@@ -17,7 +17,7 @@
                         <div>
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="text-2xl">✅</span>
-                                <h2 class="text-xl font-bold text-white">
+                                <h2 class="text-xl font-bold text-slate-100">
                                     Plan {{ sub.active.plan.name }} activo
                                 </h2>
                                 <span
@@ -35,7 +35,7 @@
                             </p>
                         </div>
                         <div class="text-right">
-                            <p class="text-3xl font-bold text-white">{{ sub.active.days_remaining }}</p>
+                            <p class="text-3xl font-bold text-slate-100">{{ sub.active.days_remaining }}</p>
                             <p class="text-xs text-emerald-300/80">días restantes</p>
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                         <router-link
                             v-if="sub.active.plan.includes_flashcards"
                             to="/flashcards"
-                            class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-sm transition"
+                            class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 text-sm transition"
                         >
                             📇 Flashcards
                         </router-link>
@@ -79,7 +79,7 @@
                     <div class="flex items-start gap-3">
                         <span class="text-2xl">⏳</span>
                         <div class="flex-1">
-                            <h2 class="text-xl font-bold text-white">
+                            <h2 class="text-xl font-bold text-slate-100">
                                 Solicitud del plan {{ sub.pending.plan.name }} en revisión
                             </h2>
                             <p class="text-amber-200/80 text-sm mt-1">
@@ -103,7 +103,7 @@
                                 </a>
                                 <router-link
                                     to="/pricing"
-                                    class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-sm transition"
+                                    class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100 text-sm transition"
                                 >
                                     Ver otros planes
                                 </router-link>
@@ -120,7 +120,7 @@
                     <div class="flex items-start gap-3">
                         <span class="text-2xl">❌</span>
                         <div class="flex-1">
-                            <h2 class="text-xl font-bold text-white">
+                            <h2 class="text-xl font-bold text-slate-100">
                                 Tu última solicitud fue rechazada
                             </h2>
                             <p class="text-rose-200/90 text-sm mt-1">
@@ -149,7 +149,7 @@
                     <div class="flex items-start gap-3">
                         <span class="text-2xl">⚡</span>
                         <div class="flex-1">
-                            <h2 class="text-xl font-bold text-white">Plan Gratuito</h2>
+                            <h2 class="text-xl font-bold text-slate-100">Plan Gratuito</h2>
                             <p class="text-slate-300 text-sm mt-1">
                                 <span v-if="sub.freeQuota?.chosen_specialty">
                                     Materia elegida:
@@ -192,7 +192,7 @@
 
                 <!-- Historial -->
                 <section v-if="requests.length > 0" class="mt-10">
-                    <h3 class="text-lg font-semibold text-white mb-3">Historial de solicitudes</h3>
+                    <h3 class="text-lg font-semibold text-slate-100 mb-3">Historial de solicitudes</h3>
                     <div class="space-y-2">
                         <div
                             v-for="r in requests"
@@ -200,7 +200,7 @@
                             class="p-3 rounded-lg border bg-slate-800/40 border-slate-700 flex items-center justify-between gap-3 flex-wrap"
                         >
                             <div>
-                                <p class="text-white text-sm font-semibold">
+                                <p class="text-slate-100 text-sm font-semibold">
                                     #{{ r.id }} · Plan {{ r.plan.name }}
                                     <span class="text-slate-400 font-normal">· {{ r.plan.formatted_price }}</span>
                                 </p>

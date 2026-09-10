@@ -9,7 +9,7 @@
                 <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-3xl">
                     🔒
                 </div>
-                <h2 class="text-2xl font-bold text-white">¡Completaste tus 10 preguntas de hoy!</h2>
+                <h2 class="text-2xl font-bold text-slate-100">¡Completaste tus 10 preguntas de hoy!</h2>
                 <p class="text-slate-400 mt-2 text-sm">Volvé mañana para mantener tu racha 🔥</p>
 
                 <div class="mt-6 bg-slate-900 border border-slate-700 rounded-xl p-5">
@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="mt-6 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border border-indigo-500/30 rounded-xl p-5">
-                    <p class="text-white font-semibold">⚡ Acceso Ilimitado Premium</p>
+                    <p class="text-slate-100 font-semibold">⚡ Acceso Ilimitado Premium</p>
                     <p class="text-sm text-slate-300 mt-1">Estudiá sin límites, sin esperas y con todas las funciones avanzadas.</p>
                     <button
                         @click="openPricing = true"
@@ -30,7 +30,7 @@
 
                 <button
                     @click="onClose"
-                    class="mt-5 text-slate-400 hover:text-white text-sm transition"
+                    class="mt-5 text-slate-400 hover:text-slate-100 text-sm transition"
                 >Seguir revisando mis respuestas</button>
             </div>
         </div>

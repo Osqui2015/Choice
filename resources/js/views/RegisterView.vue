@@ -2,7 +2,7 @@
     <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4">
         <div class="w-full max-w-md bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl shadow-2xl p-8">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-white tracking-tight">Creá tu cuenta</h1>
+                <h1 class="text-3xl font-bold text-slate-100 tracking-tight">Creá tu cuenta</h1>
                 <p class="text-slate-400 mt-1 text-sm">Empezá con 10 preguntas gratis por día</p>
             </div>
 
@@ -14,7 +14,7 @@
                         type="text"
                         required
                         autocomplete="name"
-                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         :class="errors.name ? 'border-red-500' : ''"
                         placeholder="Juan Pérez"
                     />
@@ -28,7 +28,7 @@
                         type="email"
                         required
                         autocomplete="email"
-                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         :class="errors.email ? 'border-red-500' : ''"
                         placeholder="tu@email.com"
                     />
@@ -45,7 +45,7 @@
                         required
                         autocomplete="tel"
                         inputmode="tel"
-                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         :class="errors.phone ? 'border-red-500' : ''"
                         placeholder="+54 9 11 1234-5678"
                     />
@@ -63,7 +63,7 @@
                         required
                         minlength="8"
                         autocomplete="new-password"
-                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         :class="errors.password ? 'border-red-500' : ''"
                         placeholder="Mínimo 8 caracteres"
                     />
@@ -78,7 +78,7 @@
                         required
                         minlength="8"
                         autocomplete="new-password"
-                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         :class="errors.password ? 'border-red-500' : ''"
                         placeholder="Repetí la contraseña"
                     />

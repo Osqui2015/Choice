@@ -8,10 +8,10 @@
             <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
                 <div class="flex items-center justify-between mb-5">
                     <div>
-                        <h2 class="text-2xl font-bold text-white">Elegí tu plan</h2>
+                        <h2 class="text-2xl font-bold text-slate-100">Elegí tu plan</h2>
                         <p class="text-slate-400 text-sm mt-0.5">Acceso a las +3.230 preguntas y 328 flashcards</p>
                     </div>
-                    <button @click="onClose" class="text-slate-400 hover:text-white text-2xl leading-none">×</button>
+                    <button @click="onClose" class="text-slate-400 hover:text-slate-100 text-2xl leading-none">×</button>
                 </div>
 
                 <div v-if="sub.loading" class="text-slate-400 py-8 text-center">Cargando…</div>
@@ -20,7 +20,7 @@
                     <!-- Free -->
                     <div class="border border-slate-700 rounded-xl p-4 bg-slate-900/50 flex flex-col">
                         <p class="text-xs uppercase tracking-wider text-slate-400">Gratuito</p>
-                        <p class="text-2xl font-bold text-white mt-1">$0</p>
+                        <p class="text-2xl font-bold text-slate-100 mt-1">$0</p>
                         <ul class="mt-3 space-y-1.5 text-xs text-slate-300 flex-1">
                             <li class="flex gap-1.5"><span class="text-emerald-400">✓</span> 5 preguntas diarias</li>
                             <li class="flex gap-1.5"><span class="text-emerald-400">✓</span> 1 materia a elección</li>
@@ -45,7 +45,7 @@
                         >
                             {{ plan.name }}
                         </p>
-                        <p class="text-2xl font-bold text-white mt-1">{{ plan.formatted_price }}</p>
+                        <p class="text-2xl font-bold text-slate-100 mt-1">{{ plan.formatted_price }}</p>
                         <p class="text-[10px] text-slate-500 -mt-0.5">
                             {{ plan.is_unlimited ? 'Todas las materias' : `${plan.max_specialties} materia${plan.max_specialties === 1 ? '' : 's'}` }}
                         </p>

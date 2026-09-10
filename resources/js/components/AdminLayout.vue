@@ -9,7 +9,7 @@
                         v-for="item in items"
                         :key="item.to"
                         :to="item.to"
-                        class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-slate-100"
                         active-class="bg-indigo-600/20 text-white border border-indigo-500/30"
                     >
                         <span>{{ item.icon }}</span>

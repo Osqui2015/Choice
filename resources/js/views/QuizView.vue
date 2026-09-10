@@ -9,7 +9,7 @@
                 <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-2xl">
                     🔒
                 </div>
-                <h2 class="text-xl font-bold text-white">{{ quiz.error }}</h2>
+                <h2 class="text-xl font-bold text-slate-100">{{ quiz.error }}</h2>
                 <p class="text-slate-400 text-sm mt-2">
                     Pasate a Premium para acceder a todas las preguntas de medicina sin límites.
                 </p>
@@ -22,7 +22,7 @@
                     </button>
                     <router-link
                         to="/study"
-                        class="text-xs text-slate-400 hover:text-white mt-1"
+                        class="text-xs text-slate-400 hover:text-slate-100 mt-1"
                     >
                         ← Volver a especialidades
                     </router-link>
@@ -30,7 +30,7 @@
             </div>
 
             <div v-else-if="!current" class="text-center py-16">
-                <h2 class="text-2xl font-bold text-white">¡Sesión finalizada!</h2>
+                <h2 class="text-2xl font-bold text-slate-100">¡Sesión finalizada!</h2>
                 <p class="text-slate-400 mt-2">Respondiste {{ quiz.sessionCorrect + quiz.sessionWrong }} preguntas</p>
                 <div class="mt-6 inline-flex gap-6 text-sm">
                     <div class="px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-300">
@@ -44,7 +44,7 @@
                 <!-- Si es usuario gratuito y terminó su cupo -->
                 <div v-if="!quota?.is_premium" class="mt-8 p-6 max-w-lg mx-auto rounded-2xl bg-gradient-to-br from-indigo-900/30 to-purple-900/30 border border-indigo-500/30 text-center">
                     <p class="text-2xl">🎉</p>
-                    <h3 class="text-lg font-bold text-white mt-1">¡Completaste tu prueba gratuita de esta especialidad!</h3>
+                    <h3 class="text-lg font-bold text-slate-100 mt-1">¡Completaste tu prueba gratuita de esta especialidad!</h3>
                     <p class="text-sm text-slate-300 mt-2">
                         Has respondido las preguntas de muestra. Desbloqueá el resto de las +800 preguntas de esta especialidad, el Banco de Fallos y las Flashcards con el Pase Premium.
                     </p>
@@ -64,7 +64,7 @@
                     >Hacer otra tanda</button>
                     <router-link
                         to="/study"
-                        class="px-5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white"
+                        class="px-5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100"
                     >Volver a especialidades</router-link>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                         <button
                             @click="showExitModal = true"
                             type="button"
-                            class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1 transition font-medium"
+                            class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 border border-slate-700 flex items-center gap-1 transition font-medium"
                             title="Terminar sesión"
                         >
                             <span>✕</span>
@@ -103,7 +103,7 @@
 
                 <!-- Enunciado -->
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 mb-4">
-                    <p class="text-lg leading-relaxed text-white whitespace-pre-line">{{ current.statement }}</p>
+                    <p class="text-lg leading-relaxed text-slate-100 whitespace-pre-line">{{ current.statement }}</p>
                 </div>
 
                 <!-- Opciones -->
@@ -223,7 +223,7 @@
                     <div class="w-12 h-12 rounded-full bg-slate-700/60 border border-slate-600 flex items-center justify-center text-2xl mb-4 mx-auto">
                         🚪
                     </div>
-                    <h3 class="text-lg font-bold text-white text-center">¿Querés terminar la sesión?</h3>
+                    <h3 class="text-lg font-bold text-slate-100 text-center">¿Querés terminar la sesión?</h3>
                     <p class="text-xs text-slate-400 text-center mt-1.5 leading-relaxed">
                         <span v-if="answeredCount > 0">
                             Respondiste <strong>{{ answeredCount }}</strong> preguntas en esta tanda ({{ quiz.sessionCorrect }} correctas, {{ quiz.sessionWrong }} incorrectas).
@@ -243,13 +243,13 @@
                         </button>
                         <router-link
                             to="/study"
-                            class="w-full py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs transition text-center"
+                            class="w-full py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-100 font-semibold text-xs transition text-center"
                         >
                             🏠 Salir al menú de materias
                         </router-link>
                         <button
                             @click="showExitModal = false"
-                            class="w-full py-2 rounded-xl text-slate-400 hover:text-white text-xs transition"
+                            class="w-full py-2 rounded-xl text-slate-400 hover:text-slate-100 text-xs transition"
                         >
                             Continuar respondiendo
                         </button>
@@ -302,13 +302,13 @@ function optionClasses(key: string): string {
 function keyClasses(key: string): string {
     if (!quiz.feedback) {
         return quiz.selected === key
-            ? 'bg-indigo-600 border-indigo-500 text-white'
+            ? 'bg-indigo-600 border-indigo-500 text-slate-100'
             : 'bg-slate-700 border-slate-600 text-slate-200';
     }
     const correct = quiz.feedback.correct_answer === key;
     const selected = quiz.selected === key;
-    if (correct) return 'bg-emerald-600 border-emerald-500 text-white';
-    if (selected && !correct) return 'bg-rose-600 border-rose-500 text-white';
+    if (correct) return 'bg-emerald-600 border-emerald-500 text-slate-100';
+    if (selected && !correct) return 'bg-rose-600 border-rose-500 text-slate-100';
     return 'bg-slate-700 border-slate-600 text-slate-400';
 }
 

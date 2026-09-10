@@ -50,7 +50,7 @@
                                 >
                                     {{ statusLabel(r.status) }}
                                 </span>
-                                <h3 class="text-base font-bold text-white">
+                                <h3 class="text-base font-bold text-slate-100">
                                     Plan {{ r.plan.name }} · {{ r.plan.formatted_price }}
                                 </h3>
                             </div>
@@ -58,12 +58,12 @@
                             <div class="mt-2 grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
                                 <p>
                                     <span class="text-slate-400">Usuario:</span>
-                                    <span class="text-white font-semibold">{{ r.user?.name }}</span>
+                                    <span class="text-slate-100 font-semibold">{{ r.user?.name }}</span>
                                     <span class="text-slate-500 ml-1">({{ r.user?.email }})</span>
                                 </p>
                                 <p>
                                     <span class="text-slate-400">Solicitado:</span>
-                                    <span class="text-white">{{ formatDate(r.requested_at) }}</span>
+                                    <span class="text-slate-100">{{ formatDate(r.requested_at) }}</span>
                                 </p>
                                 <p v-if="r.specialties.length > 0" class="sm:col-span-2">
                                     <span class="text-slate-400">Materias pedidas:</span>
@@ -82,7 +82,7 @@
                                 </p>
                                 <p v-if="r.approved_by" class="sm:col-span-2">
                                     <span class="text-slate-400">{{ r.status === 'rejected' ? 'Rechazado' : 'Aprobado' }} por:</span>
-                                    <span class="text-white">{{ r.approved_by.name }}</span>
+                                    <span class="text-slate-100">{{ r.approved_by.name }}</span>
                                     <span class="text-slate-500 ml-1">el {{ formatDate(r.approved_at) }}</span>
                                 </p>
                             </div>
@@ -116,7 +116,7 @@
                 @click.self="closeApprove"
             >
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-                    <h3 class="text-xl font-bold text-white mb-1">Aprobar solicitud #{{ approveRequest.id }}</h3>
+                    <h3 class="text-xl font-bold text-slate-100 mb-1">Aprobar solicitud #{{ approveRequest.id }}</h3>
                     <p class="text-sm text-slate-400 mb-4">
                         {{ approveRequest.user?.name }} · Plan {{ approveRequest.plan.name }}
                     </p>
@@ -139,7 +139,7 @@
                                     v-model="approveForm.specialty_ids"
                                     class="rounded text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-700 border-slate-600"
                                 />
-                                <span class="text-sm text-white">{{ sp.name }}</span>
+                                <span class="text-sm text-slate-100">{{ sp.name }}</span>
                                 <span class="text-xs text-slate-500 ml-auto">{{ sp.code }}</span>
                             </label>
                         </div>
@@ -153,7 +153,7 @@
                         v-model.number="approveForm.amount_paid"
                         type="number"
                         min="0"
-                        class="w-full mb-4 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                        class="w-full mb-4 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
                     />
 
                     <label class="block text-sm font-semibold text-slate-300 mb-2">Nota interna (opcional)</label>
@@ -161,7 +161,7 @@
                         v-model="approveForm.notes"
                         rows="2"
                         maxlength="500"
-                        class="w-full mb-4 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                        class="w-full mb-4 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
                         placeholder="Ej: Transferencia confirmada por mail"
                     />
 
@@ -172,7 +172,7 @@
                     <div class="flex gap-2 justify-end">
                         <button
                             @click="closeApprove"
-                            class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold transition"
+                            class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-semibold transition"
                         >
                             Cancelar
                         </button>
@@ -196,7 +196,7 @@
                 @click.self="closeReject"
             >
                 <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-                    <h3 class="text-xl font-bold text-white mb-1">Rechazar solicitud #{{ rejectRequest.id }}</h3>
+                    <h3 class="text-xl font-bold text-slate-100 mb-1">Rechazar solicitud #{{ rejectRequest.id }}</h3>
                     <p class="text-sm text-slate-400 mb-4">
                         {{ rejectRequest.user?.name }} · Plan {{ rejectRequest.plan.name }}
                     </p>
@@ -206,7 +206,7 @@
                         rows="3"
                         minlength="3"
                         maxlength="500"
-                        class="w-full mb-4 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none"
+                        class="w-full mb-4 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none"
                         placeholder="Ej: Esperá a confirmar la transferencia por mail antes de enviar el comprobante"
                     />
                     <div v-if="sub.error" class="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm">
@@ -215,7 +215,7 @@
                     <div class="flex gap-2 justify-end">
                         <button
                             @click="closeReject"
-                            class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-semibold transition"
+                            class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-semibold transition"
                         >
                             Cancelar
                         </button>
