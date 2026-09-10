@@ -80,16 +80,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Suscripción activa del usuario (no vencida, status active).
+     * Suscripción activa del usuario (no vencida, status=active).
      * Devuelve la más reciente si hay varias.
      */
-    public function activeSubscription(): ?UserSubscription
+    public function activeSubscription(): HasOne
     {
-        return $this->subscriptions()
+        return $this->hasOne(UserSubscription::class)
             ->where('status', 'active')
             ->where('expires_at', '>', now())
-            ->orderByDesc('expires_at')
-            ->with(['plan', 'specialties'])
-            ->first();
+            ->latestOfMany('expires_at');
+    }
+
+    /**
+     * Última suscripción del usuario, sea cual sea su estado.
+     * Útil para mostrar info aunque esté vencida/cancelada.
+     */
+    public function latestSubscription(): HasOne
+    {
+        return $this->hasOne(UserSubscription::class)->latestOfMany();
     }
 }

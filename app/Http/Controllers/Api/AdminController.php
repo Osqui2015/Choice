@@ -8,6 +8,7 @@ use App\Models\Question;
 use App\Models\Specialty;
 use App\Models\User;
 use App\Models\UserAnswer;
+use App\Models\UserSubscription;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -111,7 +112,7 @@ class AdminController extends Controller
             'per_page' => ['nullable', 'integer', 'min:5', 'max:100'],
         ]);
 
-        $q = User::query()->with('roles:id,name');
+        $q = User::query()->with(['roles:id,name', 'activeSubscription.plan', 'activeSubscription.specialties:id,name,code', 'latestSubscription.plan']);
 
         if ($s = $request->input('search')) {
             $q->where(function ($w) use ($s) {
@@ -465,6 +466,9 @@ class AdminController extends Controller
 
     private function serializeUser(User $u): array
     {
+        $active = $u->activeSubscription;
+        $latest = $u->latestSubscription;
+
         return [
             'id' => $u->id,
             'name' => $u->name,
@@ -477,6 +481,49 @@ class AdminController extends Controller
             'premium_until' => $u->premium_until?->toIso8601String(),
             'email_verified_at' => $u->email_verified_at?->toIso8601String(),
             'created_at' => $u->created_at?->toIso8601String(),
+            'active_subscription' => $active ? $this->serializeSubscription($active) : null,
+            'latest_subscription' => $latest && (! $active || $latest->id !== $active->id)
+                ? $this->serializeSubscription($latest)
+                : null,
+        ];
+    }
+
+    private function serializeSubscription(UserSubscription $s): array
+    {
+        $now = now();
+        $expires = $s->expires_at;
+        $started = $s->started_at;
+        $daysRemaining = $expires ? max(0, (int) $now->diffInDays($expires, false)) : 0;
+        $daysTotal = ($started && $expires) ? max(1, (int) $started->diffInDays($expires)) : null;
+        $isUnlimited = $s->plan?->isUnlimited() ?? false;
+
+        return [
+            'id' => $s->id,
+            'status' => $s->status,
+            'plan' => $s->plan ? [
+                'id' => $s->plan->id,
+                'name' => $s->plan->name,
+                'slug' => $s->plan->slug,
+                'duration_days' => $s->plan->duration_days,
+                'is_unlimited' => $isUnlimited,
+                'includes_flashcards' => (bool) $s->plan->includes_flashcards,
+                'price' => $s->plan->price,
+                'currency' => $s->plan->currency,
+            ] : null,
+            'started_at' => $started?->toIso8601String(),
+            'expires_at' => $expires?->toIso8601String(),
+            'days_remaining' => $daysRemaining,
+            'days_total' => $daysTotal,
+            'progress_pct' => $daysTotal ? (int) min(100, max(0, round((1 - $daysRemaining / $daysTotal) * 100))) : 0,
+            'payment_provider' => $s->payment_provider,
+            'payment_reference' => $s->payment_reference,
+            'amount_paid' => $s->amount_paid,
+            'currency' => $s->currency,
+            'cancelled_at' => $s->cancelled_at?->toIso8601String(),
+            'notes' => $s->notes,
+            'specialties' => $s->relationLoaded('specialties')
+                ? $s->specialties->map(fn ($sp) => ['id' => $sp->id, 'name' => $sp->name, 'code' => $sp->code])
+                : [],
         ];
     }
 

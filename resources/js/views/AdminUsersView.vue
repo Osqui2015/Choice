@@ -59,10 +59,7 @@
                             <span v-for="r in u.roles" :key="r" class="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold">{{ r }}</span>
                         </td>
                         <td class="px-3 py-2.5">
-                            <button
-                                @click="togglePremium(u)"
-                                :class="['px-2 py-1 rounded text-xs font-semibold', u.is_premium ? 'bg-yellow-500/20 text-yellow-300' : 'bg-slate-700 text-slate-400']"
-                            >{{ u.is_premium ? '⚡ Premium' : 'Free' }}</button>
+                            <SubscriptionCell :user="u" />
                         </td>
                         <td class="px-3 py-2.5">
                             <button
@@ -212,7 +209,36 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import axios from 'axios';
 import AdminLayout from '@/components/AdminLayout.vue';
+import SubscriptionCell from '@/components/SubscriptionCell.vue';
 import { useAuthStore } from '@/stores/auth';
+
+interface PlanInfo {
+    id: number;
+    name: string;
+    slug: string;
+    duration_days: number;
+    is_unlimited: boolean;
+    includes_flashcards: boolean;
+    price: number;
+    currency: string;
+}
+
+interface SubInfo {
+    id: number;
+    status: 'active' | 'pending' | 'cancelled' | 'expired';
+    plan: PlanInfo | null;
+    started_at: string | null;
+    expires_at: string | null;
+    days_remaining: number;
+    days_total: number | null;
+    progress_pct: number;
+    payment_provider: string | null;
+    amount_paid: number | null;
+    currency: string;
+    cancelled_at: string | null;
+    notes: string | null;
+    specialties: Array<{ id: number; name: string; code: string }>;
+}
 
 interface UserRow {
     id: number;
@@ -225,6 +251,8 @@ interface UserRow {
     is_active: boolean;
     premium_until: string | null;
     created_at: string;
+    active_subscription: SubInfo | null;
+    latest_subscription: SubInfo | null;
 }
 
 const auth = useAuthStore();
@@ -310,20 +338,6 @@ async function save() {
         showError(e, 'Error al guardar');
     } finally {
         saving.value = false;
-    }
-}
-
-async function togglePremium(u: UserRow) {
-    busyId.value = u.id;
-    const previous = u.is_premium;
-    u.is_premium = !u.is_premium;
-    try {
-        await axios.patch(`/admin/users/${u.id}`, { is_premium: u.is_premium });
-    } catch (e: any) {
-        u.is_premium = previous; // rollback
-        showError(e, 'No se pudo cambiar el plan');
-    } finally {
-        busyId.value = null;
     }
 }
 
