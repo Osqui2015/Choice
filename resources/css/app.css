@@ -37,6 +37,24 @@
     --color-slate-800: #ffffff;  /* card / surface */
     --color-slate-900: #f8fafc;  /* fondo principal */
     --color-slate-950: #ffffff;
+
+    /* Accents: las variantes claras (200/300) se invierten a versiones oscuras
+       para que los text-emerald-300, text-orange-300, etc. se sigan leyendo
+       sobre fondos claros. Las variantes 500/600/700/800 se mantienen. */
+    --color-emerald-200: #065f46;
+    --color-emerald-300: #047857;
+    --color-emerald-400: #059669;
+    --color-indigo-200:  #3730a3;
+    --color-indigo-300:  #4338ca;
+    --color-indigo-400:  #4f46e5;
+    --color-orange-200:  #9a3412;
+    --color-orange-300:  #c2410c;
+    --color-amber-200:   #b45309;
+    --color-amber-300:   #b45309;
+    --color-rose-200:    #9f1239;
+    --color-rose-300:    #be123c;
+    --color-red-200:     #991b1b;
+    --color-red-300:     #b91c1c;
 }
 
 /* Suavizar la transición cuando el usuario cambia de tema.

@@ -17,14 +17,14 @@
                     :class="[
                         'p-4 rounded-xl border text-left transition',
                         mode === 'study'
-                            ? 'bg-indigo-600/20 border-indigo-500/50 text-white'
+                            ? 'bg-indigo-600/20 border-indigo-500/50 text-slate-50'
                             : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-slate-600'
                     ]"
                 >
                     <div class="text-2xl mb-1">📖</div>
                     <div class="font-semibold flex items-center justify-between">
                         <span>Modo Estudio</span>
-                        <span v-if="!quota?.is_premium" class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 font-normal">4/esp</span>
+                        <span v-if="!quota?.is_premium" class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-700 font-normal">4/esp</span>
                     </div>
                     <div class="text-xs opacity-70 mt-0.5">Preguntas con feedback inmediato</div>
                 </button>
@@ -33,7 +33,7 @@
                     :class="[
                         'p-4 rounded-xl border text-left transition',
                         mode === 'errors'
-                            ? 'bg-rose-600/20 border-rose-500/50 text-white'
+                            ? 'bg-rose-600/20 border-rose-500/50 text-slate-50'
                             : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-slate-600'
                     ]"
                 >
@@ -49,7 +49,7 @@
                     :class="[
                         'p-4 rounded-xl border text-left transition',
                         mode === 'flashcards'
-                            ? 'bg-emerald-600/20 border-emerald-500/50 text-white'
+                            ? 'bg-emerald-600/20 border-emerald-500/50 text-slate-50'
                             : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-slate-600'
                     ]"
                 >
@@ -75,7 +75,7 @@
                             TODAS
                         </span>
                     </p>
-                    <p class="text-xs text-slate-300 mt-1">
+                    <p class="text-xs text-slate-700 mt-1">
                         <span v-if="!sub.active.is_unlimited && sub.active.specialties.length > 0">
                             📚 {{ sub.active.specialties.map(s => s.name).join(' · ') }}
                         </span>
@@ -188,7 +188,7 @@
                         >
                             🔒
                         </span>
-                        <span v-else class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">{{ s.code }}</span>
+                        <span v-else class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-700">{{ s.code }}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-xs text-slate-400">
                         <div v-if="hasAccessTo(s.id)">
@@ -232,7 +232,7 @@
                     >
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-lg font-bold text-slate-100">{{ s.name }}</h3>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">{{ s.code }}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-700">{{ s.code }}</span>
                         </div>
                         <div class="text-sm text-slate-300">{{ s.stats?.total_flashcards ?? 0 }} flashcards disponibles</div>
                     </button>
