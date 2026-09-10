@@ -1,5 +1,5 @@
 <template>
-    <div class="min-w-[160px] max-w-[220px]">
+    <div class="min-w-[180px] max-w-[260px]">
         <!-- Suscripción activa: nombre + días restantes + barra -->
         <div
             v-if="user.active_subscription"
@@ -21,6 +21,9 @@
                 </span>
                 <span class="text-slate-500"> · vence </span>
                 <span class="text-slate-300">{{ formatShortDate(user.active_subscription.expires_at) }}</span>
+            </p>
+            <p v-if="user.active_subscription.started_at" class="text-[10px] text-slate-500 mt-0.5">
+                desde {{ formatShortDate(user.active_subscription.started_at) }}
             </p>
             <!-- Barra de progreso del periodo contratado -->
             <div class="mt-1 h-1 rounded-full bg-slate-700/80 overflow-hidden">
@@ -66,6 +69,29 @@
             </span>
             <p v-if="user.is_premium" class="text-[10px] text-amber-400 mt-1">⚠ sin subscripcion activa</p>
         </div>
+
+        <!-- Acciones -->
+        <div class="flex items-center gap-2 mt-2">
+            <button
+                v-if="user.active_subscription"
+                @click="$emit('renew', user)"
+                :disabled="busyRenew"
+                class="text-[10px] font-semibold text-emerald-300 hover:text-emerald-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                title="Extender el periodo contratado por la duracion del plan"
+            >{{ busyRenew ? '…' : '↻ Renovar' }}</button>
+            <button
+                v-if="user.active_subscription"
+                @click="$emit('cancel', user)"
+                :disabled="busyCancel"
+                class="text-[10px] font-semibold text-rose-300 hover:text-rose-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                title="Cancelar la suscripcion (fuerza re-login del usuario)"
+            >{{ busyCancel ? '…' : '✕ Cancelar' }}</button>
+            <button
+                @click="$emit('history', user)"
+                class="text-[10px] font-semibold text-indigo-300 hover:text-indigo-200"
+                title="Ver historial completo de suscripciones"
+            >Historial</button>
+        </div>
     </div>
 </template>
 
@@ -108,7 +134,20 @@ interface User {
     latest_subscription: SubInfo | null;
 }
 
-const props = defineProps<{ user: User }>();
+const props = withDefaults(
+    defineProps<{
+        user: User;
+        busyRenew?: boolean;
+        busyCancel?: boolean;
+    }>(),
+    { busyRenew: false, busyCancel: false },
+);
+
+defineEmits<{
+    (e: 'renew', user: User): void;
+    (e: 'cancel', user: User): void;
+    (e: 'history', user: User): void;
+}>();
 
 const active = computed(() => props.user.active_subscription);
 

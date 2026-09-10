@@ -6,7 +6,7 @@
         </div>
 
         <!-- Filtros -->
-        <div class="grid sm:grid-cols-4 gap-3 mb-4">
+        <div class="grid sm:grid-cols-5 gap-3 mb-4">
             <input v-model="filters.search" @input="debouncedLoad" type="text" placeholder="Buscar por nombre, email o WhatsApp…" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm" />
             <select v-model="filters.role" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm">
                 <option value="">Todos los roles</option>
@@ -22,6 +22,14 @@
                 <option value="">Todos</option>
                 <option value="true">Activos</option>
                 <option value="false">Inactivos</option>
+            </select>
+            <select v-model="filters.subscription_status" @change="load(1)" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm">
+                <option value="">Todos los planes</option>
+                <option value="active">✓ Con plan activo</option>
+                <option value="pending">⏳ Pendiente</option>
+                <option value="expired">⌛ Expirado</option>
+                <option value="cancelled">✕ Cancelado</option>
+                <option value="free">Sin plan (Free)</option>
             </select>
         </div>
 
@@ -59,7 +67,14 @@
                             <span v-for="r in u.roles" :key="r" class="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold">{{ r }}</span>
                         </td>
                         <td class="px-3 py-2.5">
-                            <SubscriptionCell :user="u" />
+                            <SubscriptionCell
+                                :user="u"
+                                :busy-renew="busyAction === `renew-${u.id}`"
+                                :busy-cancel="busyAction === `cancel-${u.id}`"
+                                @renew="onRenew"
+                                @cancel="onCancelSub"
+                                @history="onShowHistory"
+                            />
                         </td>
                         <td class="px-3 py-2.5">
                             <button
@@ -202,6 +217,13 @@
                 </div>
             </div>
         </Teleport>
+
+        <!-- Modal historial de suscripciones -->
+        <SubscriptionHistoryModal
+            :open="historyModal.open"
+            :user="historyModal.user"
+            @close="historyModal.open = false"
+        />
     </AdminLayout>
 </template>
 
@@ -210,6 +232,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import axios from 'axios';
 import AdminLayout from '@/components/AdminLayout.vue';
 import SubscriptionCell from '@/components/SubscriptionCell.vue';
+import SubscriptionHistoryModal from '@/components/SubscriptionHistoryModal.vue';
 import { useAuthStore } from '@/stores/auth';
 
 interface PlanInfo {
@@ -261,8 +284,9 @@ const users = ref<UserRow[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const busyId = ref<number | null>(null); // para que el switch no parpadee durante la request
+const busyAction = ref<string | null>(null); // 'renew-{id}' | 'cancel-{id}' | null
 const meta = reactive({ current_page: 1, last_page: 1, per_page: 20, total: 0 });
-const filters = reactive({ search: '', role: '', is_premium: '', is_active: '' });
+const filters = reactive({ search: '', role: '', is_premium: '', is_active: '', subscription_status: '' });
 const editing = ref<any>(null);
 
 // Modal de eliminación
@@ -270,6 +294,9 @@ const confirmingDelete = ref<UserRow | null>(null);
 const deleteConfirmInput = ref('');
 const deleting = ref(false);
 const confirmText = computed(() => confirmingDelete.value?.email ?? '');
+
+// Modal historial
+const historyModal = reactive({ open: false, user: null as UserRow | null });
 
 let searchTimer: number | null = null;
 function debouncedLoad() {
@@ -285,6 +312,7 @@ async function load(page = 1) {
         if (filters.role) params.role = filters.role;
         if (filters.is_premium !== '') params.is_premium = filters.is_premium;
         if (filters.is_active !== '') params.is_active = filters.is_active;
+        if (filters.subscription_status) params.subscription_status = filters.subscription_status;
         const { data } = await axios.get('/admin/users', { params });
         users.value = data.data;
         Object.assign(meta, data.meta);
@@ -409,6 +437,48 @@ function showError(e: any, fallback: string) {
     const errs = e.response?.data?.errors;
     const firstFieldError = errs ? Object.values(errs).flat()[0] : null;
     alert(msg || firstFieldError || fallback);
+}
+
+async function onRenew(u: UserRow) {
+    if (!u.active_subscription) return;
+    const plan = u.active_subscription.plan;
+    const dur = plan?.duration_days ?? 30;
+    if (!confirm(`¿Renovar la suscripción de ${u.name}?\n\nSe extenderá la fecha de vencimiento +${dur} días.`)) {
+        return;
+    }
+    busyAction.value = `renew-${u.id}`;
+    try {
+        await axios.post(`/admin/users/${u.id}/subscriptions/${u.active_subscription.id}/renew`);
+        await load(meta.current_page);
+    } catch (e: any) {
+        showError(e, 'No se pudo renovar la suscripción');
+    } finally {
+        busyAction.value = null;
+    }
+}
+
+async function onCancelSub(u: UserRow) {
+    if (!u.active_subscription) return;
+    if (!confirm(
+        `¿Cancelar la suscripción de ${u.name}?\n\n` +
+        `El usuario será deslogueado inmediatamente y perderá el acceso premium.`,
+    )) {
+        return;
+    }
+    busyAction.value = `cancel-${u.id}`;
+    try {
+        await axios.post(`/admin/users/${u.id}/subscriptions/${u.active_subscription.id}/cancel`);
+        await load(meta.current_page);
+    } catch (e: any) {
+        showError(e, 'No se pudo cancelar la suscripción');
+    } finally {
+        busyAction.value = null;
+    }
+}
+
+function onShowHistory(u: UserRow) {
+    historyModal.user = u;
+    historyModal.open = true;
 }
 
 function formatDate(iso: string | null): string {

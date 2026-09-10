@@ -64,6 +64,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->whereNumber('id');
         Route::delete('/users/{id}/force', [AdminController::class, 'forceDeleteUser'])->whereNumber('id');
         Route::post('/users/{id}/restore', [AdminController::class, 'restoreUser'])->whereNumber('id');
+
+        // Gestion de suscripciones por admin
+        Route::get('/users/{user}/subscriptions', [AdminController::class, 'userSubscriptions'])
+            ->whereNumber('user');
+        Route::post('/users/{user}/subscriptions/{subscription}/renew', [AdminController::class, 'renewSubscription'])
+            ->whereNumber('user')->whereNumber('subscription');
+        Route::post('/users/{user}/subscriptions/{subscription}/cancel', [AdminController::class, 'cancelSubscription'])
+            ->whereNumber('user')->whereNumber('subscription');
         Route::get('/questions', [AdminController::class, 'questions']);
         Route::get('/questions/{id}', [AdminController::class, 'showQuestion'])->whereNumber('id');
         Route::patch('/questions/{id}', [AdminController::class, 'updateQuestion'])->whereNumber('id');

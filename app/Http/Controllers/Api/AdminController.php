@@ -109,6 +109,7 @@ class AdminController extends Controller
             'role' => ['nullable', 'in:admin,usuario'],
             'is_premium' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
+            'subscription_status' => ['nullable', 'in:active,pending,expired,cancelled,free'],
             'per_page' => ['nullable', 'integer', 'min:5', 'max:100'],
         ]);
 
@@ -128,6 +129,26 @@ class AdminController extends Controller
         }
         if ($request->has('is_active')) {
             $q->where('is_active', $request->boolean('is_active'));
+        }
+
+        // Filtro por estado de subscripcion.
+        // 'active' / 'pending' / 'expired' / 'cancelled' se evaluan contra
+        // la ultima suscripcion del usuario; 'free' = sin subscripciones.
+        if ($status = $request->input('subscription_status')) {
+            $q->whereHas('latestSubscription', function ($w) use ($status) {
+                if ($status === 'active') {
+                    $w->where('status', 'active')->where('expires_at', '>', now());
+                } elseif ($status === 'pending') {
+                    $w->where('status', 'pending');
+                } elseif ($status === 'expired') {
+                    $w->where('status', 'expired');
+                } elseif ($status === 'cancelled') {
+                    $w->where('status', 'cancelled');
+                }
+            });
+            if ($status === 'free') {
+                $q->whereDoesntHave('subscriptions');
+            }
         }
 
         $paginator = $q->orderByDesc('id')->paginate((int) $request->input('per_page', 20));
@@ -258,6 +279,91 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'Usuario deshabilitado',
             'self_affected' => $isSelf,
+        ]);
+    }
+
+    // ============================================================
+    //  SUBSCRIPTION MANAGEMENT
+    // ============================================================
+
+    /**
+     * Historial completo de suscripciones de un usuario (activas,
+     * pendientes, canceladas y expiradas, ordenadas por más recientes).
+     */
+    public function userSubscriptions(int $userId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+        $subs = $user->subscriptions()
+            ->with(['plan:id,name,slug,duration_days,price,currency', 'specialties:id,name,code', 'approvedBy:id,name'])
+            ->orderByDesc('id')
+            ->get()
+            ->map(fn (UserSubscription $s) => $this->serializeSubscription($s));
+
+        return response()->json([
+            'user' => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email],
+            'data' => $subs,
+        ]);
+    }
+
+    /**
+     * Renovar una suscripcion: extiende expires_at por la duracion del plan.
+     * Solo funciona si la suscripcion esta activa y vigente.
+     * Para una suscripcion vencida o cancelada, hay que crear una nueva.
+     */
+    public function renewSubscription(Request $request, int $userId, int $subId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+        $sub = $user->subscriptions()->with('plan')->findOrFail($subId);
+
+        if ($sub->status !== 'active') {
+            return response()->json([
+                'message' => "Solo se pueden renovar suscripciones activas (esta está '{$sub->status}').",
+            ], 422);
+        }
+        if ($sub->expires_at === null || $sub->expires_at->isPast()) {
+            return response()->json([
+                'message' => 'La suscripción ya venció. Aprobá una nueva solicitud en su lugar.',
+            ], 422);
+        }
+        if (! $sub->plan) {
+            return response()->json(['message' => 'La suscripción no tiene un plan asociado.'], 422);
+        }
+
+        $sub->expires_at = $sub->expires_at->copy()->addDays($sub->plan->duration_days);
+        $sub->save();
+
+        return response()->json([
+            'message' => "Suscripción renovada +{$sub->plan->duration_days} días",
+            'subscription' => $this->serializeSubscription($sub->fresh(['plan', 'specialties'])),
+        ]);
+    }
+
+    /**
+     * Cancelar una suscripcion (status=cancelled, cancelled_at=now).
+     * Mata los tokens del usuario para forzar re-login y que tome el cambio.
+     */
+    public function cancelSubscription(Request $request, int $userId, int $subId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+        $sub = $user->subscriptions()->findOrFail($subId);
+
+        if (in_array($sub->status, ['cancelled', 'expired'], true)) {
+            return response()->json([
+                'message' => "La suscripción ya está '{$sub->status}', no hay nada que cancelar.",
+            ], 422);
+        }
+
+        $sub->status = 'cancelled';
+        $sub->cancelled_at = now();
+        $sub->save();
+
+        // Forzar re-login del usuario para que pierda el acceso premium
+        $user->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Suscripción cancelada',
+            'subscription' => $this->serializeSubscription($sub->fresh(['plan', 'specialties'])),
+            'self_affected' => $request->user()?->id === $user->id,
         ]);
     }
 
