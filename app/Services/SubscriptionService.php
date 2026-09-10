@@ -48,7 +48,10 @@ class SubscriptionService
             ];
         }
 
-        $subscription = $user->activeSubscription();
+        $subscription = $user->activeSubscription;
+        if ($subscription) {
+            $subscription->loadMissing('plan', 'specialties');
+        }
 
         // 1) Plan pago activo
         if ($subscription) {
@@ -222,7 +225,7 @@ class SubscriptionService
      */
     public function recordAnswer(User $user, int $specialtyId): UserDailyQuota
     {
-        $subscription = $user->activeSubscription();
+        $subscription = $user->activeSubscription;
         if ($subscription) {
             // Pago: no descuenta cuota
             return $this->getOrCreateQuota($user);

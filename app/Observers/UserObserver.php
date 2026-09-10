@@ -32,7 +32,7 @@ class UserObserver
      */
     public function ensureFullPlan(User $user): void
     {
-        if ($user->activeSubscription()) {
+        if ($user->activeSubscription()->exists()) {
             return; // ya tiene plan
         }
 

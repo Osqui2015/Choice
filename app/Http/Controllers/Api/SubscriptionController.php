@@ -28,8 +28,9 @@ class SubscriptionController extends Controller
     {
         $user = $request->user();
         $user->loadMissing(['subscriptions.plan', 'subscriptions.specialties']);
+        $user->loadMissing(['activeSubscription.plan', 'activeSubscription.specialties']);
 
-        $active   = $user->activeSubscription();
+        $active   = $user->activeSubscription; // HasOne relation -> UserSubscription|null
         $pending  = $user->subscriptions()->where('status', 'pending')->latest('requested_at')->first();
         $quota    = $this->service->getOrCreateQuota($user);
         $this->service->refreshDailyCounter($quota);
@@ -92,7 +93,7 @@ class SubscriptionController extends Controller
     {
         $user = $request->user();
 
-        if ($user->activeSubscription()) {
+        if ($user->activeSubscription()->exists()) {
             return response()->json([
                 'message' => 'Ya tenés un plan activo. Cancelalo primero para cambiar.',
             ], 409);
@@ -177,7 +178,7 @@ class SubscriptionController extends Controller
     {
         $user = $request->user();
 
-        if ($user->activeSubscription()) {
+        if ($user->activeSubscription()->exists()) {
             return response()->json([
                 'message' => 'Tenés un plan activo, no necesitás elegir specialty free.',
             ], 409);

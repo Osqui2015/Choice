@@ -187,9 +187,12 @@ class QuizController extends Controller
             $query->where('specialty_id', $specialtyId);
         } else {
             // Sin specialty_id: filtrar por las specialties a las que el user tiene acceso
-            $active = $user->activeSubscription();
-            if (! $user->hasRole('admin') && $active && ! $active->plan->isUnlimited()) {
-                $query->whereIn('specialty_id', $active->specialties->pluck('id'));
+            $active = $user->activeSubscription;
+            if (! $user->hasRole('admin') && $active) {
+                $active->loadMissing('plan', 'specialties');
+                if (! $active->plan->isUnlimited()) {
+                    $query->whereIn('specialty_id', $active->specialties->pluck('id'));
+                }
             }
         }
         if ($topicId = $request->input('topic_id')) {
@@ -387,9 +390,12 @@ class QuizController extends Controller
             $query->where('specialty_id', $specialtyId);
         } else {
             // Sin specialty_id: filtrar por las specialties a las que el user tiene acceso
-            $active = $user->activeSubscription();
-            if (! $user->hasRole('admin') && $active && ! $active->plan->isUnlimited()) {
-                $query->whereIn('specialty_id', $active->specialties->pluck('id'));
+            $active = $user->activeSubscription;
+            if (! $user->hasRole('admin') && $active) {
+                $active->loadMissing('plan', 'specialties');
+                if (! $active->plan->isUnlimited()) {
+                    $query->whereIn('specialty_id', $active->specialties->pluck('id'));
+                }
             }
         }
 
@@ -429,9 +435,11 @@ class QuizController extends Controller
     {
         $user = $request->user();
 
+        $active = $user->activeSubscription;
+        $active?->loadMissing('plan');
         $allowed = $this->quotaService->isFeatureAllowed($user, 'flashcards')
             || $user->hasRole('admin')
-            || (bool) $user->activeSubscription()?->plan?->includes_flashcards;
+            || (bool) ($active?->plan?->includes_flashcards);
 
         if (! $allowed) {
             return response()->json([
