@@ -1,6 +1,5 @@
 <template>
-    <div class="min-h-screen bg-slate-900 text-slate-100">
-        <AppShell title="Gestión de Suscripciones" accent="emerald">
+    <AdminLayout title="Gestión de Suscripciones" subtitle="Aprobar, rechazar y ver el historial de solicitudes de plan">
             <!-- Tabs de filtro -->
             <div class="flex flex-wrap gap-2 mb-6">
                 <button
@@ -106,7 +105,7 @@
                     </div>
                 </div>
             </div>
-        </AppShell>
+        </AdminLayout>
 
         <!-- Modal aprobar -->
         <Teleport to="body">
@@ -230,12 +229,11 @@
                 </div>
             </div>
         </Teleport>
-    </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import AppShell from '@/components/AppShell.vue';
+import AdminLayout from '@/components/AdminLayout.vue';
 import { useSubscriptionStore, type PlanRequest } from '@/stores/subscription';
 
 const sub = useSubscriptionStore();
